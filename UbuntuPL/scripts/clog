@@ -1,0 +1,54 @@
+#! /bin/bash
+
+function keypress {
+	echo ""
+	journalctl --disk-usage
+	echo -e '\nNaciśnij klawisz Enter aby zakończyć...\n'
+	read r
+}
+
+case "$1" in
+	"dmesg")
+		journalctl -k | batcat -f -l log
+		keypress
+		;;
+	"boots")
+		journalctl --list-boots | batcat -f -l log
+		uptime
+		keypress
+		;;
+	"user")
+		journalctl --user | batcat -f -l log
+		keypress
+		;;
+	"system")
+		journalctl --system | batcat -f -l log
+		keypress
+		;;
+	"follow")
+		echo "######################################"
+		echo "Naciśnij |Ctrl| + |c| aby zakończyć..."
+		echo "######################################"
+		journalctl --follow
+		;;
+	"last-1000")
+		journalctl -n 1000 | batcat -f -l log
+		keypress
+		;;
+	"last-30m")
+		journalctl --since "30 minutes ago" | batcat -f -l log
+		keypress
+		;;
+	*)
+		echo "Użycie: clog polecenie"
+		echo -e "\nPolecenia:"
+		echo "    dmesg - Show kernel message log from the current boot"
+		echo "    boots - Show terse information about recorded boots"
+		echo "     user - Show the user journal for the current user"
+		echo "   system - Show the system journal"
+		echo "   follow - Follow the journal"
+		echo "last-1000 - "
+		echo " last-30m - "
+		;;
+esac
+
