@@ -1,0 +1,33 @@
+name: smb2home
+base: core24
+version: '1.0'
+summary: A script to quickly mount SMB resources from within your home directory.
+contact: radekcz@gmail.com
+source-code: https://github.com/Dobrowit/smb2home
+description: |
+  A script to quickly mount SMB resources from within your home directory.
+  Folders for mounting are created and deleted automatically. The script
+  checks what shares on a given SMB server are available and is able to
+  mount them all at once.
+grade: stable
+confinement: classic
+compression: lzo
+parts:
+  moj-skrypt:
+    plugin: dump
+    source: .
+    organize:
+      smb2home.sh: bin/smb2home.sh
+#    override-build: |
+#      chmod 755 $SNAPCRAFT_PART_INSTALL/bin/smb2home.sh
+  smbclient:
+    plugin: apt
+    stage-packages:
+      - smbclient
+apps:
+  skrypt-bash:
+    command: bin/smb2home.sh
+    plugs:
+      - password-manager-service
+      - network
+      - home

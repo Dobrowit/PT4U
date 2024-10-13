@@ -1,0 +1,5 @@
+#https://go.skype.com/skypeforlinux-64.deb
+#https://download.teamviewer.com/download/linux/teamviewer_amd64.deb
+#https://steamcdn-a.akamaihd.net/client/installer/steam.deb
+#https://download.xnview.com/XnViewMP-linux-x64.deb
+https://github.com/fastfetch-cli/fastfetch/releases/download/2.24.0/fastfetch-linux-amd64.deb

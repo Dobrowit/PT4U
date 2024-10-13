@@ -1,0 +1,54 @@
+[/]
+folder-children=['Utilities', '4575d194-d863-40e6-97d3-62f32b36418f', '371c3ac1-fd08-4383-8bef-7fbbb671f564', '4e5b73dd-a9f8-40cf-b4d9-c53413b23d3d', 'e989a251-008e-4dc4-a4a8-295b0d4f18d7', 'cb19a4da-2865-4bd6-8c66-260f4a915890', 'bc5a5b90-7fef-42ae-9e12-9c083ab3e368', 'c30f9115-9554-437b-9521-1074b0f75750', '24976892-a86d-4889-8dfb-be4037f9247c', 'd48afeed-644a-4f9d-b0f7-5f570fef2e47', '381cf98f-ea21-4148-923c-a7949dd91f27', 'e247ec00-a4e0-4176-9607-6530ab4fcdc8']
+
+[folders/24976892-a86d-4889-8dfb-be4037f9247c]
+apps=['smplayer.desktop', 'mpv.desktop', 'qnapi.desktop', 'io.gitlab.Goodvibes.desktop', 'simplescreenrecorder.desktop', 'com.uploadedlobster.peek.desktop']
+name='Dźwięk i obraz'
+
+[folders/371c3ac1-fd08-4383-8bef-7fbbb671f564]
+apps=['libreoffice-writer.desktop', 'libreoffice-calc.desktop', 'libreoffice-impress.desktop', 'libreoffice-draw.desktop', 'libreoffice-base.desktop', 'libreoffice-startcenter.desktop', 'org.gnome.Todo.desktop', 'org.gnome.Calendar.desktop']
+name='Biuro'
+
+[folders/381cf98f-ea21-4148-923c-a7949dd91f27]
+apps=['transmission-gtk.desktop', 'org.remmina.Remmina.desktop', 'thunderbird.desktop', 'chromium_chromium.desktop', 'teams-for-linux_teams-for-linux.desktop', 'zoom-client_zoom-client.desktop', 'firefox.desktop']
+name='Internet'
+
+[folders/4575d194-d863-40e6-97d3-62f32b36418f]
+apps=['sol.desktop', 'org.gnome.Sudoku.desktop', 'org.gnome.Mahjongg.desktop', 'org.gnome.Mines.desktop']
+name='Gry'
+
+[folders/4e5b73dd-a9f8-40cf-b4d9-c53413b23d3d]
+apps=['gnome-control-center.desktop', 'software-properties-gtk.desktop', 'software-properties-livepatch.desktop', 'software-properties-drivers.desktop', 'update-manager.desktop', 'org.gnome.tweaks.desktop', 'ca.desrt.dconf-editor.desktop', 'synaptic.desktop', 'menulibre.desktop', 'org.gnome.Extensions.desktop', 'snap-store_ubuntu-software.desktop', 'gufw.desktop']
+name='Ustawienia'
+
+[folders/Utilities]
+apps=['gnome-system-monitor.desktop', 'org.gnome.baobab.desktop', 'org.gnome.Calculator.desktop', 'org.gnome.DejaDup.desktop', 'org.gnome.DiskUtility.desktop', 'org.gnome.eog.desktop', 'org.gnome.Evince.desktop', 'org.gnome.FileRoller.desktop', 'org.gnome.Screenshot.desktop', 'org.gnome.seahorse.Application.desktop', 'simple-scan.desktop', 'org.gnome.Characters.desktop', 'org.gnome.Logs.desktop', 'org.gnome.font-viewer.desktop', 'yelp.desktop']
+categories=['X-GNOME-Utilities']
+excluded-apps=['nvidia-settings.desktop', 'gnome-session-properties.desktop', 'gnome-language-selector.desktop', 'usb-creator-gtk.desktop', 'org.gnome.Terminal.desktop', 'libreoffice-startcenter.desktop']
+name='X-GNOME-Utilities.directory'
+translate=true
+
+[folders/bc5a5b90-7fef-42ae-9e12-9c083ab3e368]
+apps=['gimp.desktop', 'org.inkscape.Inkscape.desktop', 'hugin.desktop', 'display-im6.q16.desktop']
+name='Grafika'
+
+[folders/c30f9115-9554-437b-9521-1074b0f75750]
+apps=['python3.8.desktop', 'org.gnome.meld.desktop', 'code_code.desktop', 'gtkhash.desktop']
+name='Programowanie'
+
+[folders/cb19a4da-2865-4bd6-8c66-260f4a915890]
+apps=['shotwell.desktop', 'rhythmbox.desktop', 'org.gnome.Totem.desktop', 'org.gnome.Cheese.desktop', 'com.rafaelmardojai.Blanket.desktop']
+name='Multimedia'
+translate=false
+
+[folders/d48afeed-644a-4f9d-b0f7-5f570fef2e47]
+apps=['mc.desktop', 'htop.desktop', 'ranger.desktop', 'byobu.desktop', 'org.gnome.Terminal.desktop']
+name='Terminal'
+
+[folders/e247ec00-a4e0-4176-9607-6530ab4fcdc8]
+apps=['org.gnome.gedit.desktop', 'org.gnome.Nautilus.desktop', 'org.keepassxc.KeePassXC.desktop', 'org.gnome.Weather.desktop', 'org.gnome.clocks.desktop', 'com.leinardi.gst.desktop', 'com.github.gi_lom.dialect.desktop']
+name='Akcesoria'
+
+[folders/e989a251-008e-4dc4-a4a8-295b0d4f18d7]
+apps=['org.gnome.PowerStats.desktop', 'nvidia-settings.desktop', 'gnome-session-properties.desktop', 'gnome-language-selector.desktop', 'usb-creator-gtk.desktop', 'info.desktop']
+name='System'

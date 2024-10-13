@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Desk to menu
+Comment=Convert .desktop icons to Fluxbox menu
+Keywords=menu;convert;desktop;
+Exec=bash -c "/usr/bin/python3 $HOME/bin/desk2menu.py"
+Icon=menu-editor
+Terminal=false
+Type=Application
+StartupNotify=false
+Categories=Utility;Fluxbox;

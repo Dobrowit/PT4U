@@ -1,0 +1,18 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Inkscape Vector Graphics Editor
+GenericName=Edytor grafiki wektorowej
+Comment=Tworzenie i edycja grafiki wektorowej SVG
+Icon=org.inkscape.Inkscape
+TryExec=inkscape
+Exec=env GTK_THEME=Yaru inkscape %F
+Actions=
+MimeType=image/svg+xml;image/svg+xml-compressed;application/vnd.corel-draw;application/pdf;application/postscript;image/x-eps;application/illustrator;image/cgm;image/x-wmf;application/x-xccx;application/x-xcgm;application/x-xcdt;application/x-xsk1;application/x-xcmx;image/x-xcdr;application/visio;application/x-visio;application/vnd.visio;application/visio.drawing;application/vsd;application/x-vsd;image/x-vsd;
+Categories=GTK;Graphics;VectorGraphics;
+Keywords=obaz;edytor;wektor;rysowanie;
+StartupNotify=true
+
+[Desktop Action X-Drawing]
+Name=Nowy Rysunek
+Exec=inkscape

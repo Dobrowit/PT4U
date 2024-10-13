@@ -1,0 +1,41 @@
+#beekeeper-studio
+chromium
+code --classic
+#digikam --candidate
+discord
+#dosbox-x
+#flameshot
+#fluent-reader --candidate
+#foobar2000
+gitkraken --classic
+#gotop
+#handbrake-jz
+insomnia
+#netcalc
+#newsboat
+#onlyoffice-desktopeditors
+#openra
+#opera
+#photoscape
+#powershell --classic
+#qsnapstore
+#rambox
+#raven-reader
+#red-app
+#rpi-imager
+#skype --classic
+#shotcut --classic
+#shutter
+snap-store
+#sweethome3d-homedesign
+#teams-for-linux
+#translatium
+#ubuntu-release-info
+#vidcutter
+#vimix
+#wallpaperdownloader
+#wethr
+#whatsdesk
+#zoom-client
+#shapezio
+desktop-security-center

@@ -1,0 +1,16 @@
+#com.discordapp.Discord
+com.github.gi_lom.dialect
+#com.github.johnfactotum.Foliate
+#com.gitlab.newsflash
+com.leinardi.gst
+#com.leinardi.gwe
+#com.mojang.Minecraft
+com.rafaelmardojai.Blanket
+#com.skype.Client
+#com.valvesoftware.Steam
+#de.haeckerfelix.Shortwave
+#org.gabmus.gfeeds
+org.gabmus.whatip
+#org.gnome.gitlab.YaLTeR.VideoTrimmer
+#org.telegram.desktop
+

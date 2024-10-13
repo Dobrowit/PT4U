@@ -1,0 +1,13 @@
+[Desktop Entry]
+Version=1.0pdu
+Terminal=false
+Type=Application
+Exec=env GTK_THEME=Yaru libreoffice --nologo %U
+MimeType=application/vnd.oasis.opendocument.text-flat-xml;application/vnd.oasis.opendocument.spreadsheet-flat-xml;application/vnd.oasis.opendocument.graphics-flat-xml;application/vnd.oasis.opendocument.presentation-flat-xml;
+Name=LibreOffice XSLT based filters
+GenericName=XSLT based filters
+GenericName[pl]=Fltry bazujące na XSLT
+NoDisplay=true
+StartupNotify=true
+X-GIO-NoFuse=true
+X-KDE-Protocols=file,http,ftp,webdav,webdavs

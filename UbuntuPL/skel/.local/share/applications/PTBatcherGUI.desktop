@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Hugin Batch Processor
+GenericName=Panorama batch processor GUI
+NoDisplay=true
+Comment=Hugin project stitching queue manager
+Icon=ptbatcher
+Exec=PTBatcherGUI %F
+Actions=
+MimeType=application/x-ptoptimizer-script;
+Categories=Graphics;

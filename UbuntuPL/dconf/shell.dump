@@ -1,0 +1,29 @@
+[/]
+app-picker-layout=[{'d48afeed-644a-4f9d-b0f7-5f570fef2e47': <{'position': <0>}>, 'Utilities': <{'position': <1>}>, '371c3ac1-fd08-4383-8bef-7fbbb671f564': <{'position': <2>}>, 'bc5a5b90-7fef-42ae-9e12-9c083ab3e368': <{'position': <3>}>, 'c30f9115-9554-437b-9521-1074b0f75750': <{'position': <4>}>, 'cb19a4da-2865-4bd6-8c66-260f4a915890': <{'position': <5>}>, '24976892-a86d-4889-8dfb-be4037f9247c': <{'position': <6>}>, 'e989a251-008e-4dc4-a4a8-295b0d4f18d7': <{'position': <7>}>, '4e5b73dd-a9f8-40cf-b4d9-c53413b23d3d': <{'position': <8>}>, '4575d194-d863-40e6-97d3-62f32b36418f': <{'position': <9>}>, '381cf98f-ea21-4148-923c-a7949dd91f27': <{'position': <10>}>, 'e247ec00-a4e0-4176-9607-6530ab4fcdc8': <{'position': <11>}>}]
+command-history=['gnome-terminal']
+disable-user-extensions=false
+enabled-extensions=['apps-menu@gnome-shell-extensions.gcampax.github.com', 'places-menu@gnome-shell-extensions.gcampax.github.com', 'drive-menu@gnome-shell-extensions.gcampax.github.com', 'user-theme@gnome-shell-extensions.gcampax.github.com']
+favorite-apps=['firefox.desktop', 'org.gnome.Nautilus.desktop', 'org.gnome.gedit.desktop', 'io.gitlab.Goodvibes.desktop', 'yelp.desktop', 'libreoffice-startcenter.desktop']
+
+[extensions/dash-to-dock]
+apply-glossy-effect=true
+autohide-in-fullscreen=false
+click-action='minimize'
+dock-fixed=false
+preferred-monitor=0
+show-mounts=false
+show-trash=false
+
+[extensions/desktop-icons]
+show-home=false
+show-mount=true
+show-trash=true
+
+[extensions/user-theme]
+name='Yaru-dark'
+
+[weather]
+locations=[<(uint32 2, <('Gdańsk', 'EPGD', true, [(0.94916821905848536, 0.32230414101938371)], [(0.94858644845891815, 0.32579479952337237)])>)>]
+
+[world-clocks]
+locations=[<(uint32 2, <('New York', 'KNYC', true, [(0.71180344078725644, -1.2909618758762367)], [(0.71059804659265924, -1.2916478949920254)])>)>, <(uint32 2, <('Dublin', 'EIDW', true, [(0.93258759116453926, -0.1090830782496456)], [(0.93083742735051689, -0.10906368764165594)])>)>, <(uint32 2, <('Moscow', 'UUWW', true, [(0.97127572873484425, 0.65042604039431762)], [(0.97305983920281813, 0.65651530216830811)])>)>, <(uint32 2, <('Jakarta', 'WIII', true, [(-0.10675597839808398, 1.8613936472519526)], [(-0.10776437728000876, 1.8645255358749011)])>)>, <(uint32 2, <('Beijing', 'ZBAA', true, [(0.69696814214530467, 2.0295270260429752)], [(0.69689057971334611, 2.0313596217575696)])>)>, <(uint32 2, <('Sydney', 'YSSY', true, [(-0.59253928105207498, 2.6386469349889961)], [(-0.59137572239964786, 2.6392287230418559)])>)>]

@@ -1,0 +1,54 @@
+<Stations>
+  <Station>
+    <uri>http://www.rmfon.pl/n/rmffm.pls</uri>
+    <name>RMF FM</name>
+  </Station>
+  <Station>
+    <uri>http://n-4-8.dcs.redcdn.pl/sc/o2/Eurozet/live/audio.livx?audio=5</uri>
+    <name>Radio Zet</name>
+  </Station>
+  <Station>
+    <uri>http://stream3.polskieradio.pl:8900/listen.pls</uri>
+    <name>Polskie Radio Program 1</name>
+  </Station>
+  <Station>
+    <uri>http://stream3.polskieradio.pl:8904/listen.pls</uri>
+    <name>Polskie Radio Trójka</name>
+  </Station>
+  <Station>
+    <uri>http://www.radiostacje.com/shortcuts/radiomaryja.m3u</uri>
+    <name>Maryja +:-)</name>
+  </Station>
+  <Station>
+    <uri>http://stream.radioagora.pl/tuba10-1.mp3.m3u</uri>
+    <name>TOK FM</name>
+  </Station>
+  <Station>
+    <uri>http://www.radiostacje.com/shortcuts/polskifmchicago.m3u</uri>
+    <name>Polski FM</name>
+  </Station>
+  <Station>
+    <uri>http://plu-gdn.cdn.eurozet.pl:8304/listen.pls</uri>
+    <name>Plus Gdańsk</name>
+  </Station>
+  <Station>
+    <uri>http://chi-kat-02.cdn.eurozet.pl:8902/listen.pls</uri>
+    <name>Zet Chilli</name>
+  </Station>
+  <Station>
+    <uri>http://stream4.nadaje.com:9212/radiokatowice.m3u</uri>
+    <name>Polskie Radio Katowice</name>
+  </Station>
+  <Station>
+    <uri>http://www3.radiokrakow.pl/other_media/online/RadioKrakow.pls</uri>
+    <name>Polskie Radio Kraków</name>
+  </Station>
+  <Station>
+    <uri>http://streaming01.technologicznie.net:8765/radio_warszawa.mp3.m3u</uri>
+    <name>Radio Warszawa</name>
+  </Station>
+  <Station>
+    <uri>http://8.38.78.173:2199/tunein/alubieni.pls</uri>
+    <name>Polskie Radio Sydney</name>
+  </Station>
+</Stations>

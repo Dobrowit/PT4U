@@ -1,0 +1,21 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=Edytor tekstu
+Comment=Edytor plików tekstowych
+Icon=org.gnome.gedit
+DBusActivatable=true
+Exec=env GTK_THEME=Yaru-dark gedit %U
+Actions=new-window;new-document;
+MimeType=text/plain;
+Categories=GNOME;GTK;TextEditor;Utility;
+Keywords=Tekst;Text;Edytor;Zwykły tekst;Pisanie;Pisz;Napisz;Write;gedit;
+StartupNotify=true
+
+[Desktop Action new-window]
+Name=Nowe okno
+Exec=gedit --new-window
+
+[Desktop Action new-document]
+Name=Nowy dokument
+Exec=gedit --new-document

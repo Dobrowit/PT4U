@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Zenity dialog
+Comment=Zenity dialog maker
+Exec=zenity --about
+Icon=messaging-app
+Terminal=false
+Type=Application
+Categories=Utility;
+NoDisplay=true

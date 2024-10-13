@@ -1,0 +1,36 @@
+[Desktop Entry]
+X-SnapInstanceName=chromium
+Version=1.0
+Name=Chromium Web Browser GPU
+Name[es]=Navegador web Chromium
+GenericName=Web Browser
+GenericName[es]=Navegador web
+GenericName[pl]=Przeglądarka WWW
+Comment=Access the Internet
+Comment[es]=Acceda a Internet
+Comment[pl]=Skorzystaj z internetu
+Exec=chromium --enable-features=VaapiVideoDecoder,VaapiVideoEncoder,VaapiVideoDecodeLinuxGL,UseChromeOSDirectVideoDecoder --enable-native-gpu-memory-buffers --ozone-platform-hint=auto
+Terminal=false
+Type=Application
+Icon=/snap/chromium/2943/chromium.png
+Categories=Network;WebBrowser;
+MimeType=text/html;text/xml;application/xhtml+xml;application/xml;application/vnd.mozilla.xul+xml;application/rss+xml;application/rdf+xml;image/gif;image/jpeg;image/png;x-scheme-handler/http;x-scheme-handler/https;x-scheme-handler/ftp;x-scheme-handler/chrome;video/webm;application/pdf;
+StartupNotify=true
+StartupWMClass=chromium
+Actions=new-window;Incognito;TempProfile;
+
+[Desktop Action new-window]
+Name=New Window
+Name[es]=Ventana nueva
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/chromium_chromium.desktop /snap/bin/chromium
+
+[Desktop Action Incognito]
+Name=New Incognito Window
+Name[es]=Ventana nueva en modo incógnito
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/chromium_chromium.desktop /snap/bin/chromium --incognito
+
+[Desktop Action TempProfile]
+Name=New Window with a Temporary Profile
+Name[es]=Ventana nueva con perfil temporal
+Exec=env BAMF_DESKTOP_FILE_HINT=/var/lib/snapd/desktop/applications/chromium_chromium.desktop /snap/bin/chromium --temp-profile
+

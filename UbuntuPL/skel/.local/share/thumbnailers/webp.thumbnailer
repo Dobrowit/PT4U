@@ -1,0 +1,4 @@
+[Thumbnailer Entry]
+Exec=/usr/bin/dwebp %i -scale 100 100 -o %o
+MimeType=image/x-webp;image/webp;
+

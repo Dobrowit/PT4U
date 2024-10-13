@@ -1,0 +1,19 @@
+Sprzętowy zegar czasu rzeczywistego (RTC) ustawiony jest na przechowywanie czasu uniwersalnego. Ponadto wygląda na to, że ten komputer ma zainstalowany jeszcze system Windows. Może to prowadzić do pewnych niedogodności.
+
+Jeśli przełączysz się z systemu Linux na Windows to ten ostatni, odczytuje RTC jako czas lokalny i system będzie wskazywał błędny czas (zwykle przesunięty o jedną godzinę w zimie i o dwie godziny latem).
+
+Przy przełączaniu w odwrotną stronę to Linux może wskazywać zły czas. Jednak w tym przypadku jeśli masz dostęp do sieci gdzie dostępny jest serwer NTP to Linux sam sobie ustawi prawidłowy czas.
+
+Możesz przełączyć czas RTC na lokalny wydając w terminalu polecenie:
+
+timedatectl set-local-rtc 1
+
+Niestety nie jest to dobre rozwiązanie ponieważ może to rodzić inne problemy. Więcej na ten temat znajdziesz w dokumentacji timedatectl, wydając w terminalu polecenie:
+
+man timedatectl
+
+W domyślnych ustawieniach Windows nie synchronizuje czasu przy uruchomieniu. Najlepszym rozwiązaniem wydaje się być zmuszenie systemu Windows aby podczas startu synchronizował zegar z serwera NTP. Można to uzyskać zapisując w autostarcie skrypt .bat z poleceniem:
+
+w32tm /resync /nowait /force
+
+Można także dodać to polecenie do harmonogramu z warunkiem wykonania podczas uruchamiania.

@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.1
+Type=Application
+Name=ranger
+Comment=Launches the ranger file manager
+Icon=textosaurus
+Exec=ranger
+Terminal=true
+Actions=
+MimeType=inode/directory;
+Categories=ConsoleOnly;FileManager;FileTools;System;System-Tools;
+Keywords=File;Manager;Browser;Explorer;Launcher;Vi;Vim;Python;
