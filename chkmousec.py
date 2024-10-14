@@ -34,8 +34,15 @@ def read_config(file_path, opt_name, sub_typ=1): # Typ 1
 def check_dconf(opt_name): # Typ 2
     print(f"{BLUE}{opt_name}{RESET}")
     try:
-        cursor_name = subprocess.check_output(['dconf', 'read', opt_name]).decode().strip().strip("'")
-        print(f"Motyw kursora: {YELLOW}{cursor_name}{RESET}")
+        result = subprocess.run(['dconf', 'read', opt_name], capture_output=True, text=True)
+        if result.returncode == 0:
+            cursor_name = result.stdout.strip().strip("'")
+            if cursor_name:
+                print(f"Motyw kursora: {YELLOW}{cursor_name}{RESET}")
+            else:
+                print(f"{RED}Klucz nie został znaleziony!{RESET}")
+        else:
+            print(f"{RED}Klucz nie został znaleziony!{RESET}")
     except Exception as e:
         print(f"{RED}Nie udało się odczytać ustawień: {e}{RESET}")
 
