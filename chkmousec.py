@@ -50,21 +50,22 @@ def check_env_var(env_var): # Typ 3
     except Exception as e:
         print(f"{RED}Nie udało się odczytać ustawień: {e}{RESET}")
     
-# Słownik paths z typami i nazwami konfiguracji
+# Słownik z nazwami konfiguracji
+# "<opis konfiguracji>": [<typ>, <ścieżka do pliku konf.>, <klucz>, <podtyp>[
 paths = {
-                  "Default": [1, '/usr/share/icons/default/index.theme', 'Name', 1],
-             "User default": [1, '~/.icons/default/index.theme', 'Name', 1],
-               "xsettingsd": [1, '~/.config/xsettingsd/xsettingsd.conf', 'Gtk/CursorThemeName', 3],
-                     "GTK2": [1, '~/.config/gtk-2.0/settings.ini', 'gtk-cursor-theme-name', 1],
-                     "GTK3": [1, '~/.config/gtk-3.0/settings.ini', 'gtk-cursor-theme-name', 1],
-                     "GTK4": [1, '~/.config/gtk-4.0/settings.ini', 'gtk-cursor-theme-name', 1],
-                      "KDE": [1, '~/.config/kcminputrc', 'cursorTheme', 1],
-              "KDE default": [1, '~/.config/kdedefaults/kcminputrc', 'cursorTheme', 1],
-                     "LXQT": [1, '~/.config/lxqt/lxqt.conf', 'icon_theme', 1],
-                    "XFCE4": [1, '~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml', 'CursorThemeName', 2],
-                    "GNOME": [2, '', '/org/gnome/desktop/interface/cursor-theme', 0],
-                     "MATE": [2, '', '/org/mate/desktop/peripherals/mouse/cursor-theme', 0],                    
-                      "X11": [3, '', 'XCURSOR_THEME', 0]
+         "Default": [1, '/usr/share/icons/default/index.theme', 'Name', 1],
+    "User default": [1, '~/.icons/default/index.theme', 'Name', 1],
+      "xsettingsd": [1, '~/.config/xsettingsd/xsettingsd.conf', 'Gtk/CursorThemeName', 3],
+            "GTK2": [1, '~/.config/gtk-2.0/settings.ini', 'gtk-cursor-theme-name', 1],
+            "GTK3": [1, '~/.config/gtk-3.0/settings.ini', 'gtk-cursor-theme-name', 1],
+            "GTK4": [1, '~/.config/gtk-4.0/settings.ini', 'gtk-cursor-theme-name', 1],
+             "KDE": [1, '~/.config/kcminputrc', 'cursorTheme', 1],
+     "KDE default": [1, '~/.config/kdedefaults/kcminputrc', 'cursorTheme', 1],
+            "LXQT": [1, '~/.config/lxqt/lxqt.conf', 'icon_theme', 1],
+           "XFCE4": [1, '~/.config/xfce4/xfconf/xfce-perchannel-xml/xsettings.xml', 'CursorThemeName', 2],
+           "GNOME": [2, '', '/org/gnome/desktop/interface/cursor-theme', 0],
+            "MATE": [2, '', '/org/mate/desktop/peripherals/mouse/cursor-theme', 0],                    
+             "X11": [3, '', 'XCURSOR_THEME', 0]
 }
 
 for name, (config_type, path, opt_name, sub_typ) in paths.items():
