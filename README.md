@@ -1,4 +1,4 @@
-# Power-Tools-for-Ubuntu
+# PT4U - Power Tools for Ubuntu
 
   - UbuntuPL - Skrypt do szybkiego 🚀 wykonywania czynności poinstalacyjnych.
   - chkmousec - Pomaga ustalić ustawienia kursora myszy
