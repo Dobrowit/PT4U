@@ -46,7 +46,7 @@ def check_libraries(exec_path):
 def get_program_name(desktop_file):
     config = configparser.ConfigParser()
     config.read(desktop_file, encoding='utf-8')
-    
+
     if 'Desktop Entry' in config and 'Name' in config['Desktop Entry']:
         return config['Desktop Entry']['Name']
     return None
@@ -96,7 +96,7 @@ def get_environment(desktop_file):
     except Exception as e:
         #print(f"Error checking libraries: {e}")
         pass
-    
+
     return 'INNE'
 
 # Funkcja do odczytu informacji o pakiecie
@@ -104,18 +104,18 @@ def get_package_info(package_name):
     cache = apt.Cache()
     if package_name in cache:
         pkg = cache[package_name]
-        
+
         if not pkg.versions:
             return "Brak informacji o wersji"
-        
+
         # Pobieranie podstawowych informacji
         version = pkg.versions[0].version
         description = pkg.versions[0].description
         dependencies = pkg.versions[0].dependencies
-        
+
         # Formatowanie zależności do tekstu
         deps_text = ", ".join([str(dep[0].name) for dep in dependencies]) if dependencies else "Brak zależności"
-        
+
         # Tworzenie pełnego opisu
         full_info = (
             f"{description}\n\n"
@@ -146,7 +146,7 @@ def get_package_icon(icon_name):
         "/usr/share/icons/oxygen",
         "/usr/share/pixmaps"
     ]
-    
+
     for dir in icon_dirs:
         for ext in ['.png', '.svg']:
             for size in ['48x48', '48']:
@@ -258,10 +258,10 @@ def on_double_click(event):
 def sort_column(col, reverse):
     data = [(tree.set(child, col), child) for child in tree.get_children('')]
     data.sort(reverse=reverse)
-    
+
     for index, (val, item) in enumerate(data):
         tree.move(item, '', index)
-    
+
     tree.heading(col, command=lambda: sort_column(col, not reverse))
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -284,13 +284,13 @@ def close_info_window():
 
 def close_info(event):
     close_info_window()
-    
+
 # Funkcja do przetwarzania plików .desktop z paskiem postępu
 def main(directory, turbo=False):
     global table_data
     desktop_files = find_desktop_files(directory)
     total_files = len(desktop_files)
-    
+
     if total_files == 0:
         messagebox.showinfo("Informacja", "Nie znaleziono plików .desktop")
         return
@@ -315,7 +315,7 @@ def main(directory, turbo=False):
                 except Exception as e:
                     # Obsługa błędów
                     print(f"Błąd przetwarzania pliku {future_to_file[future]}: {e}")
-                
+
                 # Aktualizacja paska postępu
                 progress_bar["value"] = index + 1
                 progress_bar.update()
