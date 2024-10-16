@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=chkmousec
+Comment=Pomaga ustalić ustawienia kursora myszy
+Keywords=mouse;desktop;
+Exec=bash -c "/usr/bin/python3 $HOME/bin/chkmousec.py"
+Icon=software-properties
+Terminal=true
+Type=Application
+StartupNotify=false
+Categories=Utility;
