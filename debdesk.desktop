@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Deb Desk
-Comment=
+Comment=Convert .desktop files to a Fluxbox menu
 Keywords=menu;convert;desktop;
 Exec=bash -c "/usr/bin/python3 $HOME/bin/debdesk.py"
 Icon=software-properties
