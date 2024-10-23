@@ -1,4 +1,4 @@
-/* gcc -Os -flto -Wl,--gc-sections -Wl,--strip-all -o pyburnerc pyburner.c -lpthread ; strip pyburnerc
+/* gcc -o pyburnerc pyburner.c -lpthread ; strip pyburnerc
 
 #include <stdio.h>
 #include <stdlib.h>
