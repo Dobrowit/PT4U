@@ -5,7 +5,7 @@
   - debdesk - Checks .desktop files and which deb package they belong to.
   - desk2menu - Convert .desktop files to a Fluxbox menu.
   - smb2home - A script to quickly mount SMB resources from within your home directory.
-  - imap_header_scanner - skanuje wiadomości e-mail przez IMAP w poszukiwaniu nagłówków wiadomości (skrypt badawczy)
+  - imap_header_scanner - skanuje skrzynkę e-mail przez IMAP w poszukiwaniu unikalnych nagłówków wiadomości (skrypt badawczy)
 
 ## debdesk
 Looks for .desktop files and checks if they work and checks which deb package they belong to.
