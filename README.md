@@ -5,6 +5,8 @@
   - debdesk - Checks .desktop files and which deb package they belong to.
   - desk2menu - Convert .desktop files to a Fluxbox menu.
   - smb2home - A script to quickly mount SMB resources from within your home directory.
+  - imap_header_scanner - skanuje skrzynkę e-mail przez IMAP w poszukiwaniu unikalnych nagłówków wiadomości (skrypt badawczy)
+  - pyburner - prosty wielowątkowy benchmark do testowania systemów zdalnych (oparte na standardowych bibliotekach python)
 
 ## debdesk
 Looks for .desktop files and checks if they work and checks which deb package they belong to.
