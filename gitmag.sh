@@ -1,11 +1,18 @@
 #!/bin/bash
-## git-mag.sh
+## GitMag.sh
 ##
-## Ustawienia
+## Ustawienia i kolorki
 ###############################################################################
 DEF_COMMIT='Aktualizacja'
 GIT_USER='Dobrowit'
 GIT_REPO=$(basename $(pwd))
+
+RED="\033[31m"
+YELLOW="\033[33m"
+WHITE="\033[37m"
+GREEN="\033[32m"
+BLUE="\033[34m"
+RESET="\033[0m"
 
 ## Sprawdzanie wymaganych zależności
 ###############################################################################
@@ -37,25 +44,23 @@ if [ "$1" = "-i" ]; then
   echo "  GIT_REPO=$GIT_REPO"
   echo "  GIT_USER=$GIT_USER"
   echo "  DEF_COMMIT=$DEF_COMMIT"
-  echo "Nazwa skryptu - $0"
   exit 0
 fi
 
 ## Obsługa opcji -h - Pomoc
 ###############################################################################
 if [ "$1" = "-h" ]; then
-  echo "GitMag to pomocnik dla konsolowego polecenia git."
+  echo -e "${YELLOW}GitMag to pomocnik dla konsolowego polecenia git.${RESET}"
   echo "Pozwala zapisać do bezpiecznego magazynu token potrzebny do pracy z GitHub."
-  echo "Token możesz wygenerować na stronie https://github.com/settings/tokens"
+  echo -e "Token możesz wygenerować na stronie ${BLUE}https://github.com/settings/tokens${RESET}"
   echo "Zaleca się ustawianie niezbędnych uprawnień i w miarę krótkiego czasu ważności."
-  echo "Dostępne opcje:"
-  echo "  -i - informacja o konfiguracji"
-  echo "  -t - zapisanie tokena"
-  echo "  -l - zalogowanie się do repo (nazwa repo brana jest z nazwy bieżącego katalogu)"
-  echo "  -c - commit z add i push"
-  echo ""
-  echo "  -du <user>   - ustalenie nowego użytkownika"
-  echo "  -dc <commit> - ustalenie domyślnego opisu commita"
+  echo -e "${YELLOW}Dostępne opcje:${RESET}"
+  echo -e "  ${RED}-i${RESET} - informacja o konfiguracji"
+  echo -e "  ${RED}-t${RESET} - zapisanie tokena"
+  echo -e "  ${RED}-l${RESET} - zalogowanie się do repo (nazwa repo brana jest z nazwy bieżącego katalogu)"
+  echo -e "  ${RED}-c${RESET} - commit z add i push"
+  echo -e "  ${RED}-du <user>${RESET}   - ustalenie nowego użytkownika"
+  echo -e "  ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita"
   exit 0
 fi
 
@@ -76,6 +81,7 @@ fi
 ###############################################################################
 if [ "$1" = "-l" ]; then
   TOKEN=$(secret-tool lookup "application" "GitHub")
+  echo -e "${YELLOW}git remote set-url origin https://<token>@github.com/${GIT_USER}/${GIT_REPO}${RESET}"
   git remote set-url origin https://$TOKEN@github.com/$GIT_USER/$GIT_REPO
   exit 0
 fi
@@ -83,7 +89,12 @@ fi
 ## Obsługa opcji -c - commit z add i push 
 ###############################################################################
 if [ "$1" = "-c" ]; then
-  git add ./ ; git commit -m $DEF_COMMIT ; git push origin main
+  echo -e "${YELLOW}git add ./${RESET}"
+  git add ./
+  echo -e "${YELLOW}git commit -m ${DEF_COMMIT}${RESET}"
+  git commit -m $DEF_COMMIT
+  echo -e "${YELLOW}git push orign main${RESET}"
+  git push origin main
   exit 0
 fi
 
