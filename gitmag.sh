@@ -3,8 +3,8 @@
 ##
 ## Ustawienia i kolorki
 ###############################################################################
-DEF_COMMIT='Aktualizacja'
-GIT_USER='Dobrowit'
+DEF_COMMIT="Aktualizacja"
+GIT_USER="Dobrowit"
 GIT_REPO=$(basename $(pwd))
 
 RED="\033[31m"
@@ -40,27 +40,28 @@ fi
 ## Obsługa opcji -i - Informacje o konfiguracji
 ###############################################################################
 if [ "$1" = "-i" ]; then
-  echo "Ustawienia:"
-  echo "  GIT_REPO=$GIT_REPO"
-  echo "  GIT_USER=$GIT_USER"
-  echo "  DEF_COMMIT=$DEF_COMMIT"
+  echo -e "\nUstawienia:"
+  echo -e "        Nazwa repozytorium: ${RED}${GIT_REPO}${RESET}"
+  echo -e "  Nazwa użytkownika GitHub: ${RED}${GIT_USER}${RESET}"
+  echo -e "     Domyślny opis commita: ${RED}${DEF_COMMIT}${RESET}\n"
   exit 0
 fi
 
 ## Obsługa opcji -h - Pomoc
 ###############################################################################
 if [ "$1" = "-h" ]; then
-  echo -e "${YELLOW}GitMag to pomocnik dla konsolowego polecenia git.${RESET}"
+  echo -e "\n${YELLOW}GitMag to pomocnik dla konsolowego polecenia git.${RESET}"
   echo "Pozwala zapisać do bezpiecznego magazynu token potrzebny do pracy z GitHub."
   echo -e "Token możesz wygenerować na stronie ${BLUE}https://github.com/settings/tokens${RESET}"
   echo "Zaleca się ustawianie niezbędnych uprawnień i w miarę krótkiego czasu ważności."
-  echo -e "${YELLOW}Dostępne opcje:${RESET}"
-  echo -e "  ${RED}-i${RESET} - informacja o konfiguracji"
-  echo -e "  ${RED}-t${RESET} - zapisanie tokena"
-  echo -e "  ${RED}-l${RESET} - zalogowanie się do repo (nazwa repo brana jest z nazwy bieżącego katalogu)"
-  echo -e "  ${RED}-c${RESET} - commit z add i push"
-  echo -e "  ${RED}-du <user>${RESET}   - ustalenie nowego użytkownika"
-  echo -e "  ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita"
+  echo -e "\n${YELLOW}Dostępne opcje:${RESET}"
+  echo -e "  ${RED}-i${RESET}  - informacja o konfiguracji"
+  echo -e "  ${RED}-t${RESET}  - zapisanie tokena"
+  echo -e "  ${RED}-l${RESET}  - zalogowanie się do repo (nazwa repo brana jest z nazwy bieżącego katalogu)"
+  echo -e "  ${RED}-c${RESET}  - commit z add"
+  echo -e "  ${RED}-cp${RESET} - commit z add i push"
+  echo -e "  ${RED}-du <user>${RESET}   - ustalenie domyślnego użytkownika"
+  echo -e "  ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita\n"
   exit 0
 fi
 
@@ -86,9 +87,19 @@ if [ "$1" = "-l" ]; then
   exit 0
 fi
 
-## Obsługa opcji -c - commit z add i push 
+## Obsługa opcji -c - commit z add
 ###############################################################################
 if [ "$1" = "-c" ]; then
+  echo -e "${YELLOW}git add ./${RESET}"
+  git add ./
+  echo -e "${YELLOW}git commit -m ${DEF_COMMIT}${RESET}"
+  git commit -m $DEF_COMMIT
+  exit 0
+fi
+
+## Obsługa opcji -cp - commit z add i push 
+###############################################################################
+if [ "$1" = "-cp" ]; then
   echo -e "${YELLOW}git add ./${RESET}"
   git add ./
   echo -e "${YELLOW}git commit -m ${DEF_COMMIT}${RESET}"
@@ -101,13 +112,13 @@ fi
 ## Obsługa opcji -dc <commit>
 ###############################################################################
 if [ "$1" = "-dc" ]; then
-  sed -i 's/DEF_COMMIT='.*'/DEF_COMMIT='$2'/' $0
+  sed -i -e '6s/^DEF_COMMIT='.*'/DEF_COMMIT='$2'/' $0
   exit 0
 fi
 
 ## Obsługa opcji -du <user>
 ###############################################################################
 if [ "$1" = "-du" ]; then
-  sed -i 's/GIT_USER='.*'/GIT_USER='$2'/' $0
+  sed -i -e '7s/^GIT_USER="[^"]*"$/GIT_USER="'"$2"'"/' $0
   exit 0
 fi
