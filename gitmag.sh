@@ -19,6 +19,16 @@ RESET="\033[0m"
 POLECENIA="git secret-tool"
 OK=true
 
+sprawdz_system() {
+    if grep -q "Debian" /etc/os-release; then
+        return 0
+    elif grep -q "Ubuntu" /etc/os-release; then
+        return 0
+    else
+        return 1
+    fi
+}
+
 for p in $POLECENIA; do
   if ! command -v "$p" &> /dev/null; then
     echo "Błąd: Polecenie $p nie jest dostępne w systemie." 
@@ -26,38 +36,42 @@ for p in $POLECENIA; do
   fi
 done
 
-if [ "$OK" = false ]; then
-  echo "Zakończenie skryptu z powodu brakujących poleceń."
-  echo "Zainstaluj brakujące polecenia."
-  sudo apt install git libsecret-tools
-  if [ "$?" = "0" ]; then
-	  echo "Zainstalowano pomyślnie."
-  else
+if sprawdz_system; then
+  if [ "$OK" = false ]; then
+    sudo apt install git libsecret-tools
+    if [ "$?" = "0" ]; then
+	    echo "Zainstalowano pomyślnie."
+    else
+      exit 1
+	  fi
+  fi
+else
+    echo -e "${RED}Zainstaluj brakujące polecenia!${RESET}"
     exit 1
-	fi
 fi
 
-## Obsługa opcji -i - Informacje o konfiguracji
+## Domyślny komunikat bez opcji
 ###############################################################################
-if [ "$1" = "-i" ]; then
-  echo -e "\nUstawienia:"
-  echo -e "        Nazwa repozytorium: ${RED}${GIT_REPO}${RESET}"
-  echo -e "  Nazwa użytkownika GitHub: ${RED}${GIT_USER}${RESET}"
-  echo -e "     Domyślny opis commita: ${RED}${DEF_COMMIT}${RESET}\n"
+if [ "$1" = "" ]; then
+  echo -e "\n${YELLOW}GitMag - pomocnik dla git'a.${RESET}"
+  echo -e "\n$(basename $0) ${RED}-h${RESET}    - krótka pomoc\n"
   exit 0
 fi
 
-## Obsługa opcji -h - Pomoc
+## Pomoc
 ###############################################################################
 if [ "$1" = "-h" ]; then
   echo -e "\n${YELLOW}GitMag to pomocnik dla konsolowego polecenia git.${RESET}"
   echo "Pozwala zapisać do bezpiecznego magazynu token potrzebny do pracy z GitHub."
   echo -e "Token możesz wygenerować na stronie ${BLUE}https://github.com/settings/tokens${RESET}"
-  echo "Zaleca się ustawianie niezbędnych uprawnień i w miarę krótkiego czasu ważności."
+  echo "Zaleca się ustawianie tylko niezbędnych uprawnień i max 7 dni czasu ważności."
+  echo -e "Token może być bezpiecznie przekazany przez linię poleceń (${RED}-l${RESET})."
+  echo -e "Po zakończonej pracy można w sprytny sposób usunąć token z pliku config (${RED}-r${RESET})."
   echo -e "\n${YELLOW}Dostępne opcje:${RESET}"
   echo -e "  ${RED}-i${RESET}  - informacja o konfiguracji"
-  echo -e "  ${RED}-t${RESET}  - zapisanie tokena"
+  echo -e "  ${RED}-t${RESET}  - zapisanie tokena w systemowym magazynie kluczy"
   echo -e "  ${RED}-l${RESET}  - zalogowanie się do repo (nazwa repo brana jest z nazwy bieżącego katalogu)"
+  echo -e "  ${RED}-r${RESET}  - wylogowanie się z repo (usunięcie tokena z pliku config)"
   echo -e "  ${RED}-c${RESET}  - commit z add"
   echo -e "  ${RED}-cp${RESET} - commit z add i push"
   echo -e "  ${RED}-du <user>${RESET}   - ustalenie domyślnego użytkownika"
@@ -65,10 +79,45 @@ if [ "$1" = "-h" ]; then
   exit 0
 fi
 
-## Obsługa opcji -t - Zapamiętanie tokena
+## Sprawdzanie czy jesteś we właściwym miejscu
+###############################################################################
+sprawdz_git() {
+    if [ -e ".git/" ]; then
+      echo -e "\n${GREEN}OK - jesteś w repozytorium GIT.${RESET}\n"
+      return 0
+    else
+      echo -e "\n${RED}Nie jesteś w repozytorium GIT!${RESET}\n"
+      echo "Pobierz odpowiednie repo. wydając polecenia - np.:"
+      echo -e "${YELLOW}git clone https://github.com/Dobrowit/PT4U${RESET}"
+      echo -e "${YELLOW}cd ./PT4U${RESET}\n"
+      return 1
+    fi
+}
+
+## Informacje o konfiguracji
+###############################################################################
+if [ "$1" = "-i" ]; then
+  if sprawdz_git; then
+    TOKEN=$(secret-tool lookup "application" "GitHub")
+    echo -e "        Nazwa repozytorium: ${RED}${GIT_REPO}${RESET}"
+    echo -e "  Nazwa użytkownika GitHub: ${RED}${GIT_USER}${RESET}"
+    echo -e "                     Token: ${RED}${TOKEN}${RESET}"
+    echo -e "        Adres repozytorium: ${RED}https://github.com/$GIT_USER/$GIT_REPO${RESET}"
+    echo -e "     Domyślny opis commita: ${RED}${DEF_COMMIT}${RESET}\n"
+    exit 0
+  fi
+fi
+
+## Zapamiętanie tokena w systemowej bazie kluczy
 ###############################################################################
 if [ "$1" = "-t" ]; then
-  secret-tool store --label="GitHub token" "application" "GitHub"
+  secret-tool clear "application" "GitHub"
+  if [ "$2" = "" ]; then
+    read -p "GIT_TOKEN > " T
+    echo -n "$T" | secret-tool store --label="GitHub token" "application" "GitHub"
+  else
+    echo -n "$2" | secret-tool store --label="GitHub token" "application" "GitHub"
+  fi
   if [ $? -eq 0 ]; then
     echo "Token zapisano w bazie kluczy."
     exit 0
@@ -78,45 +127,61 @@ if [ "$1" = "-t" ]; then
   fi
 fi
 
-## Obsługa opcji -l - zalogowanie się do repo
+## Zalogowanie się do repo
 ###############################################################################
 if [ "$1" = "-l" ]; then
-  TOKEN=$(secret-tool lookup "application" "GitHub")
-  echo -e "${YELLOW}git remote set-url origin https://<token>@github.com/${GIT_USER}/${GIT_REPO}${RESET}"
-  git remote set-url origin https://$TOKEN@github.com/$GIT_USER/$GIT_REPO
-  exit 0
+  if sprawdz_git; then
+    TOKEN=$(secret-tool lookup "application" "GitHub")
+    echo -e "${YELLOW}git remote set-url origin https://<token>@github.com/${GIT_USER}/${GIT_REPO}${RESET}"
+    git remote set-url origin https://$TOKEN@github.com/$GIT_USER/$GIT_REPO
+    exit 0
+  fi
 fi
 
-## Obsługa opcji -c - commit z add
+## Wylogowanie się z repo (usunięcie tokena z pliku config)
+###############################################################################
+if [ "$1" = "-r" ]; then
+  if sprawdz_git; then
+    echo -e "${YELLOW}git remote set-url origin https://github.com/${GIT_USER}/${GIT_REPO}${RESET}"
+    git remote set-url origin https://github.com/$GIT_USER/$GIT_REPO
+    exit 0
+  fi
+fi
+
+## Commit z add
 ###############################################################################
 if [ "$1" = "-c" ]; then
-  echo -e "${YELLOW}git add ./${RESET}"
-  git add ./
-  echo -e "${YELLOW}git commit -m ${DEF_COMMIT}${RESET}"
-  git commit -m $DEF_COMMIT
-  exit 0
+  if sprawdz_git; then
+    echo -e "${YELLOW}git add ./${RESET}"
+    git add ./
+    echo -e "${YELLOW}git commit -m ${DEF_COMMIT}${RESET}"
+    git commit -m $DEF_COMMIT
+    exit 0
+  fi
 fi
 
-## Obsługa opcji -cp - commit z add i push 
+## Commit z add i push 
 ###############################################################################
 if [ "$1" = "-cp" ]; then
-  echo -e "${YELLOW}git add ./${RESET}"
-  git add ./
-  echo -e "${YELLOW}git commit -m ${DEF_COMMIT}${RESET}"
-  git commit -m $DEF_COMMIT
-  echo -e "${YELLOW}git push orign main${RESET}"
-  git push origin main
-  exit 0
+  if sprawdz_git; then
+    echo -e "${YELLOW}git add ./${RESET}"
+    git add ./
+    echo -e "${YELLOW}git commit -m ${DEF_COMMIT}${RESET}"
+    git commit -m $DEF_COMMIT
+    echo -e "${YELLOW}git push orign main${RESET}"
+    git push origin main
+    exit 0
+  fi
 fi
 
-## Obsługa opcji -dc <commit>
+## Ustalenie domyślnego opisu commita
 ###############################################################################
 if [ "$1" = "-dc" ]; then
   sed -i -e '6s/^DEF_COMMIT='.*'/DEF_COMMIT='$2'/' $0
   exit 0
 fi
 
-## Obsługa opcji -du <user>
+## Ustalenie domyślnego użytkownika
 ###############################################################################
 if [ "$1" = "-du" ]; then
   sed -i -e '7s/^GIT_USER="[^"]*"$/GIT_USER="'"$2"'"/' $0
