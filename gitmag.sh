@@ -6,6 +6,7 @@
 DEF_COMMIT="Aktualizacja"
 GIT_USER="Dobrowit"
 GIT_REPO=$(basename $(pwd))
+WORK_DIR="/home/radek/WORK/GitHub/"
 
 RED="\033[31m"
 YELLOW="\033[33m"
@@ -73,7 +74,9 @@ if [ "$1" = "-h" ]; then
   echo -e "  ${RED}-l${RESET}  - zalogowanie się do repo (nazwa repo brana jest z nazwy bieżącego katalogu)"
   echo -e "  ${RED}-r${RESET}  - wylogowanie się z repo (usunięcie tokena z pliku config)"
   echo -e "  ${RED}-c${RESET}  - commit z add"
-  echo -e "  ${RED}-cp${RESET} - commit z add i push"
+  echo -e "  ${RED}-p${RESET}  - commit z add i push"
+  echo -e "  ${RED}-w${RESET}  - przejście do katalogu roboczego"
+  echo -e "  ${RED}-dw${RESET} - ustalenie domyślnego..."
   echo -e "  ${RED}-du <user>${RESET}   - ustalenie domyślnego użytkownika"
   echo -e "  ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita\n"
   exit 0
@@ -162,7 +165,7 @@ fi
 
 ## Commit z add i push 
 ###############################################################################
-if [ "$1" = "-cp" ]; then
+if [ "$1" = "-p" ]; then
   if sprawdz_git; then
     echo -e "${YELLOW}git add ./${RESET}"
     git add ./
@@ -172,6 +175,34 @@ if [ "$1" = "-cp" ]; then
     git push origin main
     exit 0
   fi
+fi
+
+## Uwaga - problem z dziedziczeniem. To nie zadziała.
+###############################################################################
+if [ "$1" = "-w" ]; then
+  cd $WORK_DIR
+  directories=($(find . -maxdepth 1 -type d ! -path .))
+  echo "Wybierz repozytorium:"
+  pwd
+  select dir in "${directories[@]}"; do
+      if [[ -n "$dir" ]]; then
+          echo -n "Wybrano katalog: "
+          cd $dir
+          pwd
+          break
+      else
+          echo "Nieprawidłowy wybór, spróbuj ponownie."
+      fi
+  done
+  exit 0
+fi
+
+## Ustalenie domyślnego SPRAWDZIĆ 
+###############################################################################
+if [ "$1" = "-dw" ]; then
+  pwd
+  sed -i -e '9s/^WORK_DIR='.*'/DEF_COMMIT='$(pwd)'/' $0
+  exit 0
 fi
 
 ## Ustalenie domyślnego opisu commita
