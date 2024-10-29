@@ -21,7 +21,7 @@ kursory=(
 "arrow"
 "b66166c04f8c3109214a4fbd64a50fc8"
 "bottom_left_corner"
-'bottom_right_corner"
+"bottom_right_corner"
 "bottom_side"
 "cell"
 "center_ptr"
