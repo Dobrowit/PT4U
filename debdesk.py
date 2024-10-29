@@ -213,12 +213,32 @@ def uninstall_package(package_name):
     except subprocess.CalledProcessError:
         messagebox.showerror("Błąd", f"Nie udało się odinstalować pakietu {package_name}.")
 
+# Funkcja do kasowania pliku .desktop
+def del_desktop(desktop_name):
+    global table_data
+    try:
+        subprocess.run(['rm', '-f', domyslny_katalog+desktop_name], check=True)
+        messagebox.showinfo("Sukces", f"Plik {desktop_name} został skasowany.")
+        remove_row_by_package_name2(desktop_name)
+    except subprocess.CalledProcessError:
+        messagebox.showerror("Błąd", f"Nie udało się skasować {desktop_name}.")
+
+
 # Usuwanie wiersza po nazwie pakietu deb
 def remove_row_by_package_name(package_name):
     # Iterowanie przez wszystkie wiersze w Treeview
     for item in tree.get_children():
         # Sprawdzenie, czy wartość w kolumnie "Pakiet deb" (druga kolumna) pasuje do podanej nazwy pakietu
         if tree.item(item)['values'][1] == package_name:
+            # Usunięcie wiersza
+            tree.delete(item)
+            break  # Jeśli chcesz usunąć tylko pierwszy znaleziony wiersz, zakończ pętlę
+
+def remove_row_by_package_name2(package_name):
+    # Iterowanie przez wszystkie wiersze w Treeview
+    for item in tree.get_children():
+        # Sprawdzenie, czy wartość w kolumnie "Pakiet deb" (druga kolumna) pasuje do podanej nazwy pakietu
+        if tree.item(item)['values'][2] == package_name:
             # Usunięcie wiersza
             tree.delete(item)
             break  # Jeśli chcesz usunąć tylko pierwszy znaleziony wiersz, zakończ pętlę
@@ -419,6 +439,9 @@ info_button.pack(side=tk.LEFT, padx=my_padx)
 
 uninstall_button = tk.Button(controls_frame, text="Odinstaluj", command=lambda: uninstall_package(tree.item(tree.focus())['values'][1]))
 uninstall_button.pack(side=tk.LEFT, padx=my_padx)
+
+del_button = tk.Button(controls_frame, text="Skasuj plik .desktop", command=lambda: del_desktop(tree.item(tree.focus())['values'][2]))
+del_button.pack(side=tk.LEFT, padx=my_padx)
 
 # Tworzenie menu kontekstowego
 menu = tk.Menu(root, tearoff=0)
