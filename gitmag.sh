@@ -44,7 +44,7 @@ wait_for_actions() {
 
             # Jeśli lista zadań nie jest pusta
             if [ -n "$running_jobs" ]; then
-                if $has_jobs && $first_line; then
+                if ! $has_jobs && $first_line; then
                     echo "#"
                     first_line=false
                 fi
