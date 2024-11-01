@@ -1,12 +1,12 @@
 # PT4U - Power Tools for Ubuntu
 
-  - UbuntuPL - Skrypt do szybkiego 🚀 wykonywania czynności poinstalacyjnych.
-  - chkmousec - Pomaga ustalić ustawienia kursora myszy
-  - debdesk - Checks .desktop files and which deb package they belong to.
-  - desk2menu - Convert .desktop files to a Fluxbox menu.
-  - smb2home - A script to quickly mount SMB resources from within your home directory.
+  - UbuntuPL - szybkie 🚀 wykonywanie czynności poinstalacyjnych (instalacja oprogramowania ustawienia systemu i profilu bieżącego użytkownika).
+  - chkmousec - pomaga ustalić ustawienia kursora myszy
+  - debdesk - sprawdza pliki .desktop i ustala z jakimi pakietami deb są powiązane
+  - desk2menu - przekształca pliki .desktop do menu Fluxbox
+  - smb2home - szybko i bezpiecznie montuj zasoby SMB (np. z serwera NAS) w katalogu domowym
   - imap_header_scanner - skanuje skrzynkę e-mail przez IMAP w poszukiwaniu unikalnych nagłówków wiadomości (skrypt badawczy)
-  - pyburner - prosty wielowątkowy benchmark do testowania systemów zdalnych (oparte na standardowych bibliotekach python)
+  - pyburner - prosty wielowątkowy benchmark do testowania systemów zdalnych np. VPS (oparte na standardowych bibliotekach python)
 
 ## debdesk
 Looks for .desktop files and checks if they work and checks which deb package they belong to.
