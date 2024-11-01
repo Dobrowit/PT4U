@@ -32,17 +32,22 @@ sprawdz_system() {
 
 wait_for_actions() {
     if gh auth status > /dev/null 2>&1; then
-        echo "Jesteś zalogowany do GitHub CLI."
+        echo "Czekam na wykonanie wyzwolonych akcji:"
 
         # Flaga do śledzenia stanu
         has_jobs=false
-
+        first_line=true
+        
         while true; do
             # Sprawdzamy listę bieżących zadań
             running_jobs=$(gh run list -R Dobrowit/$GIT_REPO --status in_progress)
 
             # Jeśli lista zadań nie jest pusta
             if [ -n "$running_jobs" ]; then
+                if $has_jobs && $first_line; then
+                    echo "#"
+                    first_line=false
+                fi
                 echo "$running_jobs"
                 has_jobs=true
             else
