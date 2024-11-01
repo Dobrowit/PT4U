@@ -113,10 +113,12 @@ if [ "$1" = "-h" ]; then
   echo -e "  ${RED}-c${RESET}  - commit z add"
   echo -e "  ${RED}-p${RESET}  - commit z add i push"
   echo -e "  ${RED}-w${RESET}  - przejście do katalogu roboczego"
+  echo -e "  ${RED}-a${RESET}  - pobiera wszystkie repozytoria"
   echo -e "  ${RED}-dw${RESET} - ustalenie domyślnego..."
   echo -e "  ${RED}-du <user>${RESET}   - ustalenie domyślnego użytkownika"
   echo -e "  ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita"
   echo -e "  ${RED}-p -w${RESET}        - tak jak ${RED}-p${RESET} plus oczekiwanie na zakończenie wyzwolonych akcji (np. GitHub Pages)\n"
+
   exit 0
 fi
 
@@ -269,7 +271,7 @@ if [ "$1" = "-w" ]; then
   exit 0
 fi
 
-## Ustalenie domyślnego SPRAWDZIĆ 
+## Ustalenie domyślnego... SPRAWDZIĆ BETA
 ###############################################################################
 if [ "$1" = "-dw" ]; then
   pwd
@@ -288,5 +290,18 @@ fi
 ###############################################################################
 if [ "$1" = "-du" ]; then
   sed -i -e '7s/^GIT_USER="[^"]*"$/GIT_USER="'"$2"'"/' $0
+  exit 0
+fi
+
+## Pobiera wszystkie repozytoria - BETA
+###############################################################################
+if [ "$1" = "-a" ]; then
+  TARGET_DIR="/home/radek/WORK/github_work"
+  TOKEN=$(secret-tool lookup "application" "GitHub")
+  REPOS=$(curl -s -H "Authorization: token $TOKEN" "https://api.github.com/user/repos?per_page=100" | grep -o 'git@[^"]*')
+  cd "$TARGET_DIR"
+  for repo in $REPOS; do
+      git clone "$repo"
+  done
   exit 0
 fi
