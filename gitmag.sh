@@ -45,7 +45,7 @@ wait_for_actions() {
             # Jeśli lista zadań nie jest pusta
             if [ -n "$running_jobs" ]; then
                 if ! $has_jobs && $first_line; then
-                    echo "#"
+                    echo -n "#"
                     first_line=false
                 fi
                 #echo "$running_jobs"
@@ -54,7 +54,7 @@ wait_for_actions() {
             else
                 # Jeśli wcześniej były zadania i teraz lista jest pusta
                 if $has_jobs; then
-                    echo -e "${GREEN}Wszystkie zadania zostały zakończone.${RESET}\n"
+                    echo -e "\n${GREEN}Wszystkie zadania zostały zakończone.${RESET}\n"
                     break
                 else
                     echo -n "#"
