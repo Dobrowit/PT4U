@@ -17,7 +17,7 @@ RESET="\033[0m"
 
 ## Sprawdzanie wymaganych zależności
 ###############################################################################
-POLECENIA="git secret-tool"
+POLECENIA="git secret-tool dialog"
 OK=true
 
 sprawdz_system() {
@@ -30,6 +30,37 @@ sprawdz_system() {
     fi
 }
 
+wait_for_actions() {
+    if gh auth status > /dev/null 2>&1; then
+        echo "Jesteś zalogowany do GitHub CLI."
+
+        # Flaga do śledzenia stanu
+        has_jobs=false
+
+        while true; do
+            # Sprawdzamy listę bieżących zadań
+            running_jobs=$(gh run list -R Dobrowit/$GIT_REPO --status in_progress)
+
+            # Jeśli lista zadań nie jest pusta
+            if [ -n "$running_jobs" ]; then
+                echo "$running_jobs"
+                has_jobs=true
+            else
+                # Jeśli wcześniej były zadania i teraz lista jest pusta
+                if $has_jobs; then
+                    echo "Wszystkie zadania zostały zakończone."
+                    break
+                else
+                    echo -n "#"
+                fi
+            fi
+            sleep 2
+        done
+    else
+        echo "Nie jesteś zalogowany do GitHub CLI. Zaloguj się, używając 'gh auth login'."
+    fi
+}
+
 for p in $POLECENIA; do
   if ! command -v "$p" &> /dev/null; then
     echo "Błąd: Polecenie $p nie jest dostępne w systemie." 
@@ -39,7 +70,7 @@ done
 
 if sprawdz_system; then
   if [ "$OK" = false ]; then
-    sudo apt install git libsecret-tools
+    sudo apt install git libsecret-tools dialog
     if [ "$?" = "0" ]; then
 	    echo "Zainstalowano pomyślnie."
     else
@@ -107,9 +138,37 @@ if [ "$1" = "-i" ]; then
     echo -e "                     Token: ${RED}${TOKEN}${RESET}"
     echo -e "        Adres repozytorium: ${RED}https://github.com/$GIT_USER/$GIT_REPO${RESET}"
     echo -e "     Domyślny opis commita: ${RED}${DEF_COMMIT}${RESET}\n"
+
+    # curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
+    # jq -r '.[] | select(.fork == false) | "\(.name) - \(.description // "Brak opisu")"'
+
+
+    # Pobranie listy repozytoriów z GitHub
+    REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" | jq -r '.[] | select(.fork == false) | "\(.name)\t\(.description // "Brak opisu")"')
     
-    curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" | jq -r '.[] | 
-    "Nazwa: \(.name)\nURL: \(.html_url)\nOpis: \(.description // "Brak opisu")\nFork: \(.fork)\n---"'
+    echo "$REPOS"
+    read
+    
+    # Tworzenie tablicy dla Dialog
+    OPTIONS=()
+    while IFS= read -r line; do
+        # Dodanie każdej pozycji do tablicy z checkboxem
+        nazwa=$(echo "$line" | awk -F'\t' '{print $1}')
+        opis=$(echo "$line" | awk -F'\t' '{print $2}')
+        OPTIONS+=("$nazwa" "$opis" off "$opis")
+    done <<< "$REPOS"
+    
+    # Wywołanie Dialog
+    dialog --title "Wybór Repozytoriów" --item-help --colors --backtitle "gitmag" --separate-output --checklist "Wybierz repozytoria:" 20 70 15 "${OPTIONS[@]}" 3>&1 1>&2 2>&3
+
+    # Sprawdzenie, czy użytkownik potwierdził wybór
+    if [ $? -eq 0 ]; then
+        echo "Wybrane repozytoria:"
+        echo "$REPLY"
+    else
+        echo "Anulowano."
+    fi
+    
     exit 0
   fi
 fi
@@ -176,6 +235,7 @@ if [ "$1" = "-p" ]; then
     git commit -m $DEF_COMMIT
     echo -e "${YELLOW}git push orign main${RESET}"
     git push origin main
+    wait_for_actions
     exit 0
   fi
 fi
