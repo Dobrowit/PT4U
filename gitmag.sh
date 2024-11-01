@@ -107,6 +107,9 @@ if [ "$1" = "-i" ]; then
     echo -e "                     Token: ${RED}${TOKEN}${RESET}"
     echo -e "        Adres repozytorium: ${RED}https://github.com/$GIT_USER/$GIT_REPO${RESET}"
     echo -e "     Domyślny opis commita: ${RED}${DEF_COMMIT}${RESET}\n"
+    
+    curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" | jq -r '.[] | 
+    "Nazwa: \(.name)\nURL: \(.html_url)\nOpis: \(.description // "Brak opisu")\nFork: \(.fork)\n---"'
     exit 0
   fi
 fi
