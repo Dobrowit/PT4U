@@ -32,7 +32,7 @@ sprawdz_system() {
 
 wait_for_actions() {
     if gh auth status > /dev/null 2>&1; then
-        echo "Czekam na wykonanie wyzwolonych akcji:"
+        echo -e "${RED}Czekam na wykonanie wyzwolonych akcji:${RESET}"
 
         # Flaga do śledzenia stanu
         has_jobs=false
@@ -53,7 +53,7 @@ wait_for_actions() {
             else
                 # Jeśli wcześniej były zadania i teraz lista jest pusta
                 if $has_jobs; then
-                    echo "Wszystkie zadania zostały zakończone."
+                    echo -e "${GREEN}Wszystkie zadania zostały zakończone.${RESET}\n"
                     break
                 else
                     echo -n "#"
