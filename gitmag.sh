@@ -49,7 +49,7 @@ wait_for_actions() {
                     first_line=false
                 fi
                 #echo "$running_jobs"
-                echo "${BLUE}#${RESET}"
+                echo -e -n "${BLUE}#${RESET}"
                 has_jobs=true
             else
                 # Jeśli wcześniej były zadania i teraz lista jest pusta
