@@ -109,7 +109,8 @@ if [ "$1" = "-h" ]; then
   echo -e "  ${RED}-w${RESET}  - przejście do katalogu roboczego"
   echo -e "  ${RED}-dw${RESET} - ustalenie domyślnego..."
   echo -e "  ${RED}-du <user>${RESET}   - ustalenie domyślnego użytkownika"
-  echo -e "  ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita\n"
+  echo -e "  ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita"
+  echo -e "  ${RED}-p -w${RESET}        - tak jak ${RED}-p${RESET} plus oczekiwanie na zakończenie wyzwolonych akcji (np. GitHub Pages)\n"
   exit 0
 fi
 
@@ -235,7 +236,9 @@ if [ "$1" = "-p" ]; then
     git commit -m $DEF_COMMIT
     echo -e "${YELLOW}git push orign main${RESET}"
     git push origin main
-    wait_for_actions
+    if [ "$2" = "-w" ]; then
+      wait_for_actions
+    fi
     exit 0
   fi
 fi
