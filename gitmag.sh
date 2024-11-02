@@ -153,10 +153,8 @@ if [ "$1" = "-i" ]; then
 
 
     # Pobranie listy repozytoriów z GitHub
-    REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" | jq -r '.[] | select(.fork == false) | "\(.name)\t\(.description // "Brak opisu")"')
-    
-    echo "$REPOS"
-    read
+    REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
+    jq -r '.[] | select(.fork == false) | "\(.name)\t\(.description // "Brak opisu")"')
     
     # Tworzenie tablicy dla Dialog
     OPTIONS=()
@@ -168,7 +166,13 @@ if [ "$1" = "-i" ]; then
     done <<< "$REPOS"
     
     # Wywołanie Dialog
-    dialog --title "Wybór Repozytoriów" --item-help --colors --backtitle "gitmag" --separate-output --checklist "Wybierz repozytoria:" 20 70 15 "${OPTIONS[@]}" 3>&1 1>&2 2>&3
+    dialog \
+      --title "Wybór Repozytoriów" \
+      --item-help \
+      --colors \
+      --backtitle "gitmag" \
+      --separate-output \
+      --checklist "Wybierz repozytoria:" 20 70 15 "${OPTIONS[@]}" 3>&1 1>&2 2>&3
 
     # Sprawdzenie, czy użytkownik potwierdził wybór
     if [ $? -eq 0 ]; then
