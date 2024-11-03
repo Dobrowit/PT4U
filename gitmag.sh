@@ -30,6 +30,39 @@ sprawdz_system() {
     fi
 }
 
+for p in $POLECENIA; do
+  if ! command -v "$p" &> /dev/null; then
+    echo "Błąd: Polecenie $p nie jest dostępne w systemie." 
+    OK=false
+  fi
+done
+
+if sprawdz_system; then
+  if [ "$OK" = false ]; then
+    sudo apt install git libsecret-tools dialog
+    if [ "$?" = "0" ]; then
+	    echo "Zainstalowano pomyślnie."
+    else
+      exit 1
+	  fi
+  fi
+else
+    echo -e "${RED}Zainstaluj brakujące polecenia!${RESET}"
+    exit 1
+fi
+
+## Pomocne funkcje
+###############################################################################
+sprawdz_git() {
+    if [ -e ".git/" ]; then
+      echo -e "\n ${GREEN}OK - folder $(pwd) jest repozytorium GIT.${RESET}\n"
+      return 0
+    else
+      echo -e "\n ${RED}Folder $(pwd) nie jest repozytorium GIT!${RESET}\n"
+      return 1
+    fi
+}
+
 wait_for_actions() {
   response=$(curl -H "Authorization: token $TOKEN" -s "https://api.github.com/repos/$GIT_USER/$GIT_REPO/pages")
   if echo "$response" | grep -q '"html_url":'; then
@@ -70,26 +103,6 @@ wait_for_actions() {
   fi
 }
 
-for p in $POLECENIA; do
-  if ! command -v "$p" &> /dev/null; then
-    echo "Błąd: Polecenie $p nie jest dostępne w systemie." 
-    OK=false
-  fi
-done
-
-if sprawdz_system; then
-  if [ "$OK" = false ]; then
-    sudo apt install git libsecret-tools dialog
-    if [ "$?" = "0" ]; then
-	    echo "Zainstalowano pomyślnie."
-    else
-      exit 1
-	  fi
-  fi
-else
-    echo -e "${RED}Zainstaluj brakujące polecenia!${RESET}"
-    exit 1
-fi
 
 ## Domyślny komunikat bez opcji
 ###############################################################################
@@ -107,11 +120,11 @@ if [ "$1" = "-h" ]; then
   echo -e "Token możesz wygenerować na stronie ${BLUE}https://github.com/settings/tokens${RESET}"
   echo "Zaleca się ustawianie tylko niezbędnych uprawnień i max 7 dni czasu ważności."
   echo -e "Token może być bezpiecznie przekazany przez linię poleceń (${RED}-l${RESET})."
-  echo -e "Po zakończonej pracy można w sprytny sposób usunąć token z pliku config (${RED}-r${RESET})."
+  echo -e "Po zakończonej pracy można w sprytny sposób usunąć token z plików config (${RED}-r${RESET})."
   echo -e "Niektóre polecenia działają na wszystkich repozytoriach na raz"
   echo -e "ale tylko w tych co znajdują się w folderze roboczym (${BLUE}${WORK_DIR}${RESET})."
   echo -e "\n${YELLOW}Dostępne opcje:${RESET}"
-  echo -e "           ${RED}-i${RESET} - informacja o konfiguracji"
+  echo -e "           ${RED}-i${RESET} - informacja o konfiguracji i o bieżącym ropozytorium"
   echo -e "           ${RED}-t${RESET} - zapisanie tokena w systemowym magazynie kluczy"
   echo -e "           ${RED}-l${RESET} - zalogowanie się do GitHub (we wszystkich pobranych repo.)"
   echo -e "           ${RED}-r${RESET} - wylogowanie się (usunięcie tokena z plików config)"
@@ -119,28 +132,13 @@ if [ "$1" = "-h" ]; then
   echo -e "           ${RED}-p${RESET} - commit z add i push"
   echo -e "          ${RED}-dw${RESET} - pobiera wybrane repozytoria"
   echo -e "          ${RED}-da${RESET} - pobiera wszystkie repozytoria"
-  echo -e "          ${RED}-df${RESET} - ustalenie domyślnego folderu roboczego"
+  echo -e "    ${RED}-df <dir>${RESET} - ustalenie domyślnego folderu roboczego"
   echo -e "   ${RED}-du <user>${RESET} - ustalenie domyślnego użytkownika"
   echo -e " ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita"
 
   exit 0
 fi
 
-## Sprawdzanie czy jesteś we właściwym miejscu
-###############################################################################
-sprawdz_git() {
-    if [ -e ".git/" ]; then
-      echo -e "\n ${GREEN}OK - jesteś w repozytorium GIT.${RESET}\n"
-      return 0
-    else
-      echo -e "\n ${RED}Nie jesteś w repozytorium GIT!${RESET}\n"
-      echo " Pobierz odpowiednie repo. wydając polecenia - np.:"
-      echo -e " ${YELLOW}gitmag.sh -dw${RESET}"
-      echo -e " ${YELLOW}cd ./<nazwa_repozytorium>${RESET}"
-      echo -e " lub po prostu zmień bieżacy folder na folder z repozytorium GIT.\n"
-      return 1
-    fi
-}
 
 ## Informacje o konfiguracji
 ###############################################################################
@@ -192,22 +190,32 @@ fi
 ## Zalogowanie się do repo
 ###############################################################################
 if [ "$1" = "-l" ]; then
-  if sprawdz_git; then
-    TOKEN=$(secret-tool lookup "application" "GitHub")
-    echo -e "${YELLOW}git remote set-url origin https://<token>@github.com/${GIT_USER}/${GIT_REPO}${RESET}"
-    git remote set-url origin https://$TOKEN@github.com/$GIT_USER/$GIT_REPO
-    exit 0
-  fi
+  TOKEN=$(secret-tool lookup "application" "GitHub")
+  REPOS=$(ls $WORK_DIR)
+  echo -e "${YELLOW}git remote set-url origin https://<token>@github.com/${GIT_USER}/<repo>${RESET}"
+  for R in $REPOS; do
+    echo -n -e "$R"
+    cd "${WORK_DIR%/}/$R"
+    if sprawdz_git; then
+      git remote set-url origin https://$TOKEN@github.com/$GIT_USER/$GIT_REPO
+    fi
+  done    
+  exit 0
 fi
 
 ## Wylogowanie się z repo (usunięcie tokena z pliku config)
 ###############################################################################
 if [ "$1" = "-r" ]; then
-  if sprawdz_git; then
-    echo -e "${YELLOW}git remote set-url origin https://github.com/${GIT_USER}/${GIT_REPO}${RESET}"
-    git remote set-url origin https://github.com/$GIT_USER/$GIT_REPO
-    exit 0
-  fi
+  REPOS=$(ls $WORK_DIR)
+  echo -e "${YELLOW}git remote set-url origin https://github.com/${GIT_USER}/${GIT_REPO}${RESET}"
+  for R in $REPOS; do
+    echo -n -e "$R"
+    cd "${WORK_DIR%/}/$R"
+    if sprawdz_git; then
+      git remote set-url origin https://github.com/$GIT_USER/$GIT_REPO
+    fi
+  done    
+  exit 0
 fi
 
 ## Commit z add
@@ -278,7 +286,7 @@ fi
 ###############################################################################
 if [ "$1" = "-da" ]; then
   REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
-  jq -r '.[] | select(.fork == false) | "\(.name)"')
+          jq -r '.[] | select(.fork == false) | "\(.name)"')
   cd "$WORK_DIR"; echo -e "Folder roboczy - ${BLUE}$WORK_DIR${RESET}\n"
   if [ $? -eq 0 ]; then
     for R in $REPOS; do
@@ -299,8 +307,8 @@ fi
 ## Ustalenie domyślnego folderu roboczego
 ###############################################################################
 if [ "$1" = "-df" ]; then
-  pwd
-  sed -i -e '9s/^WORK_DIR='.*'/DEF_COMMIT='$(pwd)'/' $0
+  cd "$2"
+  sed -i -e '9s/^WORK_DIR='.*'/DEF_COMMIT="'"$(pwd)"'"/' $0
   exit 0
 fi
 
