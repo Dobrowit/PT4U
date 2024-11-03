@@ -263,7 +263,7 @@ if [ "$1" = "-dw" ]; then
   WYBOR=$(dialog --item-help --colors --backtitle "https://github.com/$GIT_USER/" \
     --title "Wybierz repozytoria do sklonowania:" \
     --checklist "Foldery, które już istnieją i mają nazwę jak repozytorium\n\
-spowodują pominięcie klonowania danego repozytorium." 20 70 15 "${OPTIONS[@]}" 3>&1 1>&2 2>&3)
+spowodują pominięcie klonowania danego repozytorium." 30 80 30 "${OPTIONS[@]}" 3>&1 1>&2 2>&3)
   clear
   cd "$WORK_DIR"; echo -e "Folder roboczy - ${BLUE}$WORK_DIR${RESET}\n"
   if [ $? -eq 0 ]; then
