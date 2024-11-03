@@ -116,6 +116,7 @@ fi
 ###############################################################################
 if [ "$1" = "-h" ]; then
   echo -e "\n${YELLOW}GitMag to pomocnik dla konsolowego polecenia git.${RESET}"
+  echo "--------------------------------------------------------------------------------"
   echo "Pozwala zapisać do bezpiecznego magazynu token potrzebny do pracy z GitHub."
   echo -e "Token możesz wygenerować na stronie ${BLUE}https://github.com/settings/tokens${RESET}"
   echo "Zaleca się ustawianie tylko niezbędnych uprawnień i max 7 dni czasu ważności."
@@ -123,20 +124,27 @@ if [ "$1" = "-h" ]; then
   echo -e "Po zakończonej pracy można w sprytny sposób usunąć token z plików config (${RED}-r${RESET})."
   echo -e "Niektóre polecenia działają na wszystkich repozytoriach na raz"
   echo -e "ale tylko w tych co znajdują się w folderze roboczym (${BLUE}${WORK_DIR}${RESET})."
+  echo "--------------------------------------------------------------------------------"
   echo -e "\n${YELLOW}Dostępne opcje:${RESET}"
+  echo "--------------------------------------------------------------------------------"
   echo -e "           ${RED}-i${RESET} - informacja o konfiguracji i o bieżącym ropozytorium"
   echo -e "           ${RED}-t${RESET} - zapisanie tokena w systemowym magazynie kluczy"
   echo -e "           ${RED}-l${RESET} - zalogowanie się do GitHub (we wszystkich pobranych repo.)"
   echo -e "           ${RED}-r${RESET} - wylogowanie się (usunięcie tokena z plików config)"
+  echo "--------------------------------------------------------------------------------"
   echo -e "           ${RED}-c${RESET} - commit z add"
   echo -e "           ${RED}-p${RESET} - commit z add i push"
+  echo "--------------------------------------------------------------------------------"
   echo -e "          ${RED}-dw${RESET} - pobiera wybrane repozytoria"
   echo -e "          ${RED}-da${RESET} - pobiera wszystkie repozytoria"
-  echo -e "           ${RED}-w${RESET} - otwarcie przeglądarki www z repozytorium z GitHub"
+  echo "--------------------------------------------------------------------------------"
+  echo -e "           ${RED}-w${RESET} - otwarcie www z repozytorium z GitHub"
+  echo -e "          ${RED}-wt${RESET} - otwarcie www na stronie GitHub - Personal access tokens"
+  echo "--------------------------------------------------------------------------------"
   echo -e "    ${RED}-df <dir>${RESET} - ustalenie domyślnego folderu roboczego"
   echo -e "   ${RED}-du <user>${RESET} - ustalenie domyślnego użytkownika"
   echo -e " ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita"
-
+  echo "--------------------------------------------------------------------------------"
   exit 0
 fi
 
@@ -332,6 +340,15 @@ fi
 if [ "$1" = "-w" ]; then
   if sprawdz_git; then  
     sensible-browser 2>/dev/null --new-tab https://github.com/$GIT_USER/$GIT_REPO
+  fi
+  exit 0
+fi
+
+## 
+###############################################################################
+if [ "$1" = "-wt" ]; then
+  if sprawdz_git; then  
+    sensible-browser 2>/dev/null --new-tab https://github.com/settings/tokens
   fi
   exit 0
 fi
