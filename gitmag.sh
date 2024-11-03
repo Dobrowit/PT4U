@@ -233,7 +233,7 @@ if [ "$1" = "-p" ]; then
 
     response=$(curl -H "Authorization: token $TOKEN" -s "https://api.github.com/repos/$GIT_USER/$GIT_REPO/pages")
     echo -e "${response}"
-    if ! echo "$response" | grep -q '"html_url":'; then
+    if echo "$response" | grep -q '"html_url":'; then
       wait_for_actions
     fi
     exit 0
