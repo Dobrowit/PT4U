@@ -1,12 +1,12 @@
 #!/bin/bash
 ## GitMag.sh
 ##
-## Ustawienia i kolorki
+## Ustawienia i kolorki - nie zmieniać linii 6-8
 ###############################################################################
+WORK_DIR="/home/radek/WORK/GitHub/"
 DEF_COMMIT="Aktualizacja"
 GIT_USER="Dobrowit"
 GIT_REPO=$(basename $(pwd))
-WORK_DIR="/home/radek/WORK/GitHub/"
 
 RED="\033[31m"
 YELLOW="\033[33m"
@@ -307,21 +307,20 @@ fi
 ## Ustalenie domyślnego folderu roboczego
 ###############################################################################
 if [ "$1" = "-df" ]; then
-  cd "$2"
-  sed -i -e '9s/^WORK_DIR='.*'/DEF_COMMIT="'"$(pwd)"'"/' $0
+  sed -i -e '6s|^WORK_DIR="[^"]*"$|WORK_DIR="'"$2"'"|' $0
   exit 0
 fi
 
 ## Ustalenie domyślnego użytkownika
 ###############################################################################
 if [ "$1" = "-du" ]; then
-  sed -i -e '7s/^GIT_USER="[^"]*"$/GIT_USER="'"$2"'"/' $0
+  sed -i -e '8s/^GIT_USER="[^"]*"$/GIT_USER="'"$2"'"/' $0
   exit 0
 fi
 
 ## Ustalenie domyślnego opisu commita
 ###############################################################################
 if [ "$1" = "-dc" ]; then
-  sed -i -e '6s/^DEF_COMMIT='.*'/DEF_COMMIT='$2'/' $0
+  sed -i -e '7s/^DEF_COMMIT="[^"]*"$/DEF_COMMIT="'"$2"'"/' $0
   exit 0
 fi
