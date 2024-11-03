@@ -147,8 +147,7 @@ sprawdz_git() {
 if [ "$1" = "-i" ]; then
   TOKEN=$(secret-tool lookup "application" "GitHub")
   ILOSC=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" | \
-  jq -r '.[] | select(.fork == false) | "  \(.name) - \(.description // "Brak opisu")"' | \
-  wc -l)
+          jq -r '.[] | select(.fork == false) | "  \(.name) - \(.description // "Brak opisu")"' | wc -l)
 
   if sprawdz_git; then  
     echo -e "          Nazwa repozytorium: ${YELLOW}${GIT_REPO}${RESET}"
@@ -245,8 +244,7 @@ fi
 ###############################################################################
 if [ "$1" = "-dw" ]; then
   REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
-  jq -r '.[] | select(.fork == false) | "\(.name)\t\(.description // "Brak opisu")"')
-
+          jq -r '.[] | select(.fork == false) | "\(.name)\t\(.description // "Brak opisu")"')
   OPTIONS=()
   while IFS= read -r LINE; do
       # Dodanie każdej pozycji do tablicy z checkboxem
@@ -254,15 +252,10 @@ if [ "$1" = "-dw" ]; then
       opis=$(echo "$LINE" | awk -F'\t' '{print $2}')
       OPTIONS+=("$nazwa" "$opis" off "$opis")
   done <<< "$REPOS"
-
-  WYBOR=$(dialog \
-    --item-help \
-    --colors \
-    --backtitle "https://github.com/$GIT_USER/" \
+  WYBOR=$(dialog --item-help --colors --backtitle "https://github.com/$GIT_USER/" \
     --title "Wybierz repozytoria do sklonowania:" \
     --checklist "Foldery, które już istnieją i mają nazwę jak repozytorium\n\
 spowodują pominięcie klonowania danego repozytorium." 20 70 15 "${OPTIONS[@]}" 3>&1 1>&2 2>&3)
-
   clear
   cd "$WORK_DIR"; echo -e "Folder roboczy - ${BLUE}$WORK_DIR${RESET}\n"
   if [ $? -eq 0 ]; then
@@ -324,4 +317,3 @@ if [ "$1" = "-dc" ]; then
   sed -i -e '6s/^DEF_COMMIT='.*'/DEF_COMMIT='$2'/' $0
   exit 0
 fi
-
