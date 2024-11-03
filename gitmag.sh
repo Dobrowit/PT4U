@@ -150,6 +150,7 @@ if [ "$1" = "-i" ]; then
 
   if sprawdz_git; then  
     echo -e "          Nazwa repozytorium: ${YELLOW}${GIT_REPO}${RESET}"
+    echo -e " Lokalny folder repozytorium: ${YELLOW}$WORK_DIR$GIT_REPO${RESET}"
     echo -e "          Adres repozytorium: ${YELLOW}https://github.com/$GIT_USER/$GIT_REPO${RESET}"
     echo -n "                GitHub Pages: "
     response=$(curl -H "Authorization: token $TOKEN" -s "https://api.github.com/repos/$GIT_USER/$GIT_REPO/pages")
