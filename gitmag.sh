@@ -105,19 +105,20 @@ if [ "$1" = "-h" ]; then
   echo "Zaleca się ustawianie tylko niezbędnych uprawnień i max 7 dni czasu ważności."
   echo -e "Token może być bezpiecznie przekazany przez linię poleceń (${RED}-l${RESET})."
   echo -e "Po zakończonej pracy można w sprytny sposób usunąć token z pliku config (${RED}-r${RESET})."
+  echo -e "Niektóre polecenia działają na wszystkich repozytoriach na raz"
+  echo -e "ale tylko w tych co znajdują się w folderze roboczym (${BLUE}${WORK_DIR}${RESET})."
   echo -e "\n${YELLOW}Dostępne opcje:${RESET}"
-  echo -e "  ${RED}-i${RESET}  - informacja o konfiguracji"
-  echo -e "  ${RED}-t${RESET}  - zapisanie tokena w systemowym magazynie kluczy"
-  echo -e "  ${RED}-l${RESET}  - zalogowanie się do repo (nazwa repo brana jest z nazwy bieżącego katalogu)"
-  echo -e "  ${RED}-r${RESET}  - wylogowanie się z repo (usunięcie tokena z pliku config)"
-  echo -e "  ${RED}-c${RESET}  - commit z add"
-  echo -e "  ${RED}-p${RESET}  - commit z add i push"
-  echo -e "  ${RED}-w${RESET}  - przejście do katalogu roboczego"
-  echo -e "  ${RED}-a${RESET}  - pobiera wszystkie repozytoria"
-  echo -e "  ${RED}-dw${RESET} - ustalenie domyślnego..."
-  echo -e "  ${RED}-du <user>${RESET}   - ustalenie domyślnego użytkownika"
-  echo -e "  ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita"
-  echo -e "  ${RED}-p -w${RESET}        - tak jak ${RED}-p${RESET} plus oczekiwanie na zakończenie wyzwolonych akcji (np. GitHub Pages)\n"
+  echo -e "           ${RED}-i${RESET} - informacja o konfiguracji"
+  echo -e "           ${RED}-t${RESET} - zapisanie tokena w systemowym magazynie kluczy"
+  echo -e "           ${RED}-l${RESET} - zalogowanie się do GitHub (we wszystkich pobranych repo.)"
+  echo -e "           ${RED}-r${RESET} - wylogowanie się (usunięcie tokena z plików config)"
+  echo -e "           ${RED}-c${RESET} - commit z add"
+  echo -e "           ${RED}-p${RESET} - commit z add i push"
+  echo -e "          ${RED}-dw${RESET} - pobiera wybrane repozytoria"
+  echo -e "          ${RED}-da${RESET} - pobiera wszystkie repozytoria"
+  echo -e "          ${RED}-df${RESET} - ustalenie domyślnego folderu roboczego"
+  echo -e "   ${RED}-du <user>${RESET} - ustalenie domyślnego użytkownika"
+  echo -e " ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita"
 
   exit 0
 fi
@@ -126,13 +127,14 @@ fi
 ###############################################################################
 sprawdz_git() {
     if [ -e ".git/" ]; then
-      echo -e "\n${GREEN}OK - jesteś w repozytorium GIT.${RESET}\n"
+      echo -e "\n ${GREEN}OK - jesteś w repozytorium GIT.${RESET}\n"
       return 0
     else
-      echo -e "\n${RED}Nie jesteś w repozytorium GIT!${RESET}\n"
-      echo "Pobierz odpowiednie repo. wydając polecenia - np.:"
-      echo -e "${YELLOW}git clone https://github.com/Dobrowit/PT4U${RESET}"
-      echo -e "${YELLOW}cd ./PT4U${RESET}\n"
+      echo -e "\n ${RED}Nie jesteś w repozytorium GIT!${RESET}\n"
+      echo " Pobierz odpowiednie repo. wydając polecenia - np.:"
+      echo -e " ${YELLOW}gitmag.sh -dw${RESET}"
+      echo -e " ${YELLOW}cd ./<nazwa_repozytorium>${RESET}"
+      echo -e " lub po prostu zmień bieżacy folder na folder z repozytorium GIT.\n"
       return 1
     fi
 }
@@ -140,50 +142,30 @@ sprawdz_git() {
 ## Informacje o konfiguracji
 ###############################################################################
 if [ "$1" = "-i" ]; then
-  if sprawdz_git; then
-    TOKEN=$(secret-tool lookup "application" "GitHub")
-    echo -e "        Nazwa repozytorium: ${RED}${GIT_REPO}${RESET}"
-    echo -e "  Nazwa użytkownika GitHub: ${RED}${GIT_USER}${RESET}"
-    echo -e "                     Token: ${RED}${TOKEN}${RESET}"
-    echo -e "        Adres repozytorium: ${RED}https://github.com/$GIT_USER/$GIT_REPO${RESET}"
-    echo -e "     Domyślny opis commita: ${RED}${DEF_COMMIT}${RESET}\n"
+  TOKEN=$(secret-tool lookup "application" "GitHub")
+  ILOSC=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" | \
+  jq -r '.[] | select(.fork == false) | "  \(.name) - \(.description // "Brak opisu")"' | \
+  wc -l)
 
-    # curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
-    # jq -r '.[] | select(.fork == false) | "\(.name) - \(.description // "Brak opisu")"'
-
-
-    # Pobranie listy repozytoriów z GitHub
-    REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
-    jq -r '.[] | select(.fork == false) | "\(.name)\t\(.description // "Brak opisu")"')
-    
-    # Tworzenie tablicy dla Dialog
-    OPTIONS=()
-    while IFS= read -r line; do
-        # Dodanie każdej pozycji do tablicy z checkboxem
-        nazwa=$(echo "$line" | awk -F'\t' '{print $1}')
-        opis=$(echo "$line" | awk -F'\t' '{print $2}')
-        OPTIONS+=("$nazwa" "$opis" off "$opis")
-    done <<< "$REPOS"
-    
-    # Wywołanie Dialog
-    dialog \
-      --title "Wybór Repozytoriów" \
-      --item-help \
-      --colors \
-      --backtitle "gitmag" \
-      --separate-output \
-      --checklist "Wybierz repozytoria:" 20 70 15 "${OPTIONS[@]}" 3>&1 1>&2 2>&3
-
-    # Sprawdzenie, czy użytkownik potwierdził wybór
-    if [ $? -eq 0 ]; then
-        echo "Wybrane repozytoria:"
-        echo "$REPLY"
+  if sprawdz_git; then  
+    echo -e "          Nazwa repozytorium: ${YELLOW}${GIT_REPO}${RESET}"
+    echo -e "          Adres repozytorium: ${YELLOW}https://github.com/$GIT_USER/$GIT_REPO${RESET}"
+    echo -n "                GitHub Pages: "
+    response=$(curl -H "Authorization: token $TOKEN" -s "https://api.github.com/repos/$GIT_USER/$GIT_REPO/pages")
+    if echo "$response" | grep -q '"message": "Not Found"'; then
+        echo -e "${YELLOW}nie jest włączone${RESET}"
     else
-        echo "Anulowano."
+        URL=$(echo "$response" | grep '"html_url":' | awk -F '"' '{print $4}')
+        echo -e "${YELLOW}${URL}${RESET}"
     fi
-    
-    exit 0
+    echo -e " Ilość repozytoriów w GitHub: ${YELLOW}${ILOSC}${RESET}"
   fi
+  
+  echo -e "              Folder roboczy: ${RED}${WORK_DIR}${RESET}"
+  echo -e "       Domyślny opis commita: ${RED}${DEF_COMMIT}${RESET}"
+  echo -e "    Nazwa użytkownika GitHub: ${RED}${GIT_USER}${RESET}"
+  echo -e "                       Token: ${RED}${TOKEN}${RESET}\n"
+  exit 0
 fi
 
 ## Zapamiętanie tokena w systemowej bazie kluczy
@@ -248,45 +230,83 @@ if [ "$1" = "-p" ]; then
     git commit -m $DEF_COMMIT
     echo -e "${YELLOW}git push orign main${RESET}"
     git push origin main
-    if [ "$2" = "-w" ]; then
+
+    response=$(curl -H "Authorization: token $TOKEN" -s "https://api.github.com/repos/$GIT_USER/$GIT_REPO/pages")
+    echo -e "${response}"
+    if ! echo "$response" | grep -q '"html_url":'; then
       wait_for_actions
     fi
     exit 0
   fi
 fi
 
-## Uwaga - problem z dziedziczeniem. To nie zadziała.
-###############################################################################
-if [ "$1" = "-w" ]; then
-  cd $WORK_DIR
-  directories=($(find . -maxdepth 1 -type d ! -path .))
-  echo "Wybierz repozytorium:"
-  pwd
-  select dir in "${directories[@]}"; do
-      if [[ -n "$dir" ]]; then
-          echo -n "Wybrano katalog: "
-          cd $dir
-          pwd
-          break
-      else
-          echo "Nieprawidłowy wybór, spróbuj ponownie."
-      fi
-  done
-  exit 0
-fi
-
-## Ustalenie domyślnego... SPRAWDZIĆ BETA
+## Pobiera wybrane repozytoria
 ###############################################################################
 if [ "$1" = "-dw" ]; then
-  pwd
-  sed -i -e '9s/^WORK_DIR='.*'/DEF_COMMIT='$(pwd)'/' $0
+  REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
+  jq -r '.[] | select(.fork == false) | "\(.name)\t\(.description // "Brak opisu")"')
+
+  OPTIONS=()
+  while IFS= read -r LINE; do
+      # Dodanie każdej pozycji do tablicy z checkboxem
+      nazwa=$(echo "$LINE" | awk -F'\t' '{print $1}')
+      opis=$(echo "$LINE" | awk -F'\t' '{print $2}')
+      OPTIONS+=("$nazwa" "$opis" off "$opis")
+  done <<< "$REPOS"
+
+  WYBOR=$(dialog \
+    --item-help \
+    --colors \
+    --backtitle "https://github.com/$GIT_USER/" \
+    --title "Wybierz repozytoria do sklonowania:" \
+    --checklist "Foldery, które już istnieją i mają nazwę jak repozytorium\n\
+spowodują pominięcie klonowania danego repozytorium." 20 70 15 "${OPTIONS[@]}" 3>&1 1>&2 2>&3)
+
+  clear
+  cd "$WORK_DIR"; echo -e "Folder roboczy - ${BLUE}$WORK_DIR${RESET}\n"
+  if [ $? -eq 0 ]; then
+    for R in $WYBOR; do
+        echo -e "${GREEN}$R${RESET}"
+        if [ ! -e "$R" ]; then
+          git clone "https://github.com/$GIT_USER/$R"
+          echo ""
+        else
+          echo -e "${RED}Folder o nazwie tego repozytorium już istnieje!${RESET}\n"
+        fi
+    done
+  else
+      echo -e "${BLUE}Anulowano.${RESET}"
+  fi
   exit 0
 fi
 
-## Ustalenie domyślnego opisu commita
+## Pobiera wszystkie repozytoria
 ###############################################################################
-if [ "$1" = "-dc" ]; then
-  sed -i -e '6s/^DEF_COMMIT='.*'/DEF_COMMIT='$2'/' $0
+if [ "$1" = "-da" ]; then
+  REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
+  jq -r '.[] | select(.fork == false) | "\(.name)"')
+  cd "$WORK_DIR"; echo -e "Folder roboczy - ${BLUE}$WORK_DIR${RESET}\n"
+  if [ $? -eq 0 ]; then
+    for R in $REPOS; do
+        echo -e "${GREEN}$R${RESET}"
+        if [ ! -e "$R" ]; then
+          git clone "https://github.com/$GIT_USER/$R"
+          echo ""
+        else
+          echo -e "${RED}Folder o nazwie tego repozytorium już istnieje!${RESET}\n"
+        fi
+    done
+  else
+      echo -e "${BLUE}Anulowano.${RESET}"
+  fi
+  exit 0
+fi
+
+## Ustalenie domyślnego folderu roboczego
+###############################################################################
+if [ "$1" = "-df" ]; then
+  pwd
+  sed -i -e '9s/^WORK_DIR='.*'/DEF_COMMIT='$(pwd)'/' $0
   exit 0
 fi
 
@@ -297,15 +317,10 @@ if [ "$1" = "-du" ]; then
   exit 0
 fi
 
-## Pobiera wszystkie repozytoria - BETA
+## Ustalenie domyślnego opisu commita
 ###############################################################################
-if [ "$1" = "-a" ]; then
-  TARGET_DIR="/home/radek/WORK/github_work"
-  TOKEN=$(secret-tool lookup "application" "GitHub")
-  REPOS=$(curl -s -H "Authorization: token $TOKEN" "https://api.github.com/user/repos?per_page=100" | grep -o 'git@[^"]*')
-  cd "$TARGET_DIR"
-  for repo in $REPOS; do
-      git clone "$repo"
-  done
+if [ "$1" = "-dc" ]; then
+  sed -i -e '6s/^DEF_COMMIT='.*'/DEF_COMMIT='$2'/' $0
   exit 0
 fi
+
