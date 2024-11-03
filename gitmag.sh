@@ -31,6 +31,8 @@ sprawdz_system() {
 }
 
 wait_for_actions() {
+  response=$(curl -H "Authorization: token $TOKEN" -s "https://api.github.com/repos/$GIT_USER/$GIT_REPO/pages")
+  if echo "$response" | grep -q '"html_url":'; then
     if gh auth status > /dev/null 2>&1; then
         echo -e "${RED}Czekam na wykonanie wyzwolonych akcji:${RESET}"
 
@@ -65,6 +67,7 @@ wait_for_actions() {
     else
         echo "Nie jesteś zalogowany do GitHub CLI. Zaloguj się, używając 'gh auth login'."
     fi
+  fi
 }
 
 for p in $POLECENIA; do
@@ -224,18 +227,16 @@ fi
 ###############################################################################
 if [ "$1" = "-p" ]; then
   if sprawdz_git; then
+    status=$(git status -uno)
     echo -e "${YELLOW}git add ./${RESET}"
     git add ./
     echo -e "${YELLOW}git commit -m ${DEF_COMMIT}${RESET}"
     git commit -m $DEF_COMMIT
     echo -e "${YELLOW}git push orign main${RESET}"
     git push origin main
-
-    response=$(curl -H "Authorization: token $TOKEN" -s "https://api.github.com/repos/$GIT_USER/$GIT_REPO/pages")
-    echo -e "${response}"
-    if echo "$response" | grep -q '"html_url":'; then
-      wait_for_actions
-    fi
+    if echo "$status" | grep -q "zmieniono"; then
+        wait_for_actions
+    fi    
     exit 0
   fi
 fi
