@@ -261,7 +261,8 @@ fi
 ## Pobiera wybrane repozytoria
 ###############################################################################
 if [ "$1" = "-dw" ]; then
-  REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
+  TOKEN=$(secret-tool lookup "application" "GitHub")
+  REPOS=$(curl -H "Authorization: token $TOKEN" -s "https://api.github.com/user/repos?per_page=100" |
           jq -r '.[] | select(.fork == false) | "\(.name)\t\(.description // "Brak opisu")"')
   OPTIONS=()
   while IFS= read -r LINE; do
@@ -295,7 +296,8 @@ fi
 ## Pobiera wszystkie repozytoria
 ###############################################################################
 if [ "$1" = "-da" ]; then
-  REPOS=$(curl -s "https://api.github.com/users/$GIT_USER/repos?per_page=100" |
+  TOKEN=$(secret-tool lookup "application" "GitHub")
+  REPOS=$(curl -H "Authorization: token $TOKEN" -s "https://api.github.com/user/repos?per_page=100" |
           jq -r '.[] | select(.fork == false) | "\(.name)"')
   cd "$WORK_DIR"; echo -e "Folder roboczy - ${BLUE}$WORK_DIR${RESET}\n"
   if [ $? -eq 0 ]; then
