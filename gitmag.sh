@@ -132,6 +132,7 @@ if [ "$1" = "-h" ]; then
   echo -e "           ${RED}-p${RESET} - commit z add i push"
   echo -e "          ${RED}-dw${RESET} - pobiera wybrane repozytoria"
   echo -e "          ${RED}-da${RESET} - pobiera wszystkie repozytoria"
+  echo -e "           ${RED}-w${RESET} - otwarcie przeglądarki www z repozytorium z GitHub"
   echo -e "    ${RED}-df <dir>${RESET} - ustalenie domyślnego folderu roboczego"
   echo -e "   ${RED}-du <user>${RESET} - ustalenie domyślnego użytkownika"
   echo -e " ${RED}-dc <commit>${RESET} - ustalenie domyślnego opisu commita"
@@ -322,5 +323,14 @@ fi
 ###############################################################################
 if [ "$1" = "-dc" ]; then
   sed -i -e '7s/^DEF_COMMIT="[^"]*"$/DEF_COMMIT="'"$2"'"/' $0
+  exit 0
+fi
+
+## 
+###############################################################################
+if [ "$1" = "-w" ]; then
+  if sprawdz_git; then  
+    sensible-browser 2>/dev/null --new-tab https://github.com/$GIT_USER/$GIT_REPO
+  fi
   exit 0
 fi
