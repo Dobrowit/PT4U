@@ -349,8 +349,6 @@ fi
 ## 
 ###############################################################################
 if [ "$1" = "-wt" ]; then
-  if sprawdz_git; then  
-    sensible-browser 2>/dev/null --new-tab https://github.com/settings/tokens
-  fi
+  sensible-browser 2>/dev/null --new-tab https://github.com/settings/tokens &
   exit 0
 fi
