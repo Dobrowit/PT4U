@@ -14,7 +14,9 @@ class SnapManagerApp:
         search_frame = tk.Frame(root)
         search_frame.pack(fill=tk.X, pady=5)
 
-        tk.Label(search_frame, text="Filter:").pack(side=tk.LEFT, padx=5)
+        filter_label = tk.Label(search_frame, text="Filter:")
+        filter_label.pack(side=tk.LEFT, padx=5)
+        filter_label.bind("<Button-1>", lambda event: self.clear_filter())
         self.filter_entry = tk.Entry(search_frame)
         self.filter_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
         self.filter_entry.bind("<Return>", lambda event: self.refresh_data())
@@ -24,6 +26,7 @@ class SnapManagerApp:
             self.tree.heading(col, text=col, command=lambda c=col: self.sort_column(c, False))
             self.tree.column(col, width=150, anchor=tk.W)
         self.tree.pack(fill=tk.BOTH, expand=True)
+        self.tree.bind("<Double-1>", lambda event: self.show_info(self.tree))
         
         button_frame = tk.Frame(root)
         button_frame.pack(fill=tk.X)
@@ -46,13 +49,21 @@ class SnapManagerApp:
         self.enable_button = tk.Button(button_frame, text="Enable", command=lambda: self.enable_package(self.tree))
         self.enable_button.pack(side=tk.LEFT, padx=5, pady=5)
 
-        self.services_button = tk.Button(button_frame, text="Services", command=self.show_services)
+        self.services_button = tk.Button(button_frame, text="Services", command=lambda: self.show_cmd(f"snap services"))
         self.services_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+        self.aliases_button = tk.Button(button_frame, text="Aliases", command=lambda: self.show_cmd(f"snap aliases"))
+        self.aliases_button.pack(side=tk.LEFT, padx=5, pady=5)
         
         self.snap_install_button = tk.Button(button_frame, text="Snap Install", command=self.open_snap_install)
         self.snap_install_button.pack(side=tk.LEFT, padx=5, pady=5)
         
         self.raw_data = []
+        self.refresh_data()
+
+    def clear_filter(self):
+        """Czyści zawartość pola filtra."""
+        self.filter_entry.delete(0, tk.END)
         self.refresh_data()
 
     def refresh_data(self):
@@ -95,8 +106,8 @@ class SnapManagerApp:
         self.tree.tag_configure("classic_unverified", background="pink")  # brak gwiazdek i classic
         self.tree.tag_configure("disabled", background="deep sky blue")  # disabled
 
-    def show_services(self):
-        info = self.execute_command(f"snap services")
+    def show_cmd(self, cmd):
+        info = self.execute_command(cmd)
         info_window = tk.Toplevel(self.root)
         info_window.title(f"Services")
         info_window.transient(self.root)
@@ -190,6 +201,7 @@ class SnapManagerApp:
             self.install_tree.heading(col, text=col, command=lambda c=col: self.sort_column(c, False))
             self.install_tree.column(col, width=150, anchor=tk.W)
         self.install_tree.pack(fill=tk.BOTH, expand=True)
+        self.install_tree.bind("<Double-1>", lambda event: self.show_info(self.install_tree))
 
         install_info2_button = tk.Button(snap_install_window, text="Info", command=lambda: self.show_info(self.install_tree))
         install_info2_button.pack(side=tk.LEFT, padx=5, pady=5)
@@ -227,14 +239,27 @@ class SnapManagerApp:
                 self.execute_command(f"snap install {package_name}")
                 messagebox.showinfo("Success", f"Package {package_name} installed.")
                 self.refresh_data()
-
+                
     def remove_package(self, treeview):
         package = self.get_selected_package(treeview)
         if package:
             if messagebox.askyesno("Confirm", f"Are you sure you want to remove {package}?"):
-                self.execute_command(f"snap remove {package}")
-                self.refresh_data()
-    
+                remove_thread = threading.Thread(target=self.run_remove, args=(package,))
+                remove_thread.start()
+                self.show_busy_indicator()
+
+    def run_remove(self, package_name):
+        """Funkcja uruchamiana w osobnym wątku."""
+        try:
+            self.execute_command(f"snap remove {package_name}")
+            self.refresh_data()
+            #messagebox.showinfo("Success", f"Package {package_name} removed.")
+        except Exception as e:
+            messagebox.showerror("Error", str(e))
+        finally:
+            # Ukryj wskaźnik zajętości
+            self.hide_busy_indicator()
+
     def refresh_package(self, treeview):
         package = self.get_selected_package(treeview)
         command = f"snap refresh {package}" if package else "snap refresh"
@@ -308,7 +333,7 @@ class SnapManagerApp:
         try:
             self.execute_command(f"snap install {package_name}")
             self.refresh_data()
-            messagebox.showinfo("Success", f"Package {package_name} installed.")
+            #messagebox.showinfo("Success", f"Package {package_name} installed.")
         except Exception as e:
             messagebox.showerror("Error", str(e))
         finally:
@@ -322,11 +347,11 @@ class SnapManagerApp:
         self.busy_window.transient(self.root)
         self.busy_window.grab_set()
         
-        tk.Label(self.busy_window, text="Please wait, installing...").pack(padx=20, pady=20)
+        tk.Label(self.busy_window, text="Please wait...").pack(padx=20, pady=20)
         
         # Dodanie przycisku do anulowania
-        cancel_button = tk.Button(self.busy_window, text="Cancel", command=self.cancel_install)
-        cancel_button.pack(pady=10)
+        #cancel_button = tk.Button(self.busy_window, text="Cancel", command=self.cancel_install)
+        #cancel_button.pack(pady=10)
         
         # Ustaw okno jako modalne
         self.busy_window.protocol("WM_DELETE_WINDOW", lambda: None)  # Zablokowanie zamknięcia okna przez użytkownika
