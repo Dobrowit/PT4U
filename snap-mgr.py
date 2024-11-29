@@ -39,7 +39,7 @@ class SnapManagerApp:
         
         self.remove_button = tk.Button(button_frame, text="Remove", command=self.remove_package)
         self.remove_button.pack(side=tk.LEFT, padx=5, pady=5)
-        
+                
         self.refresh_button = tk.Button(button_frame, text="Refresh", command=self.refresh_package)
         self.refresh_button.pack(side=tk.LEFT, padx=5, pady=5)
         
@@ -49,14 +49,17 @@ class SnapManagerApp:
         self.enable_button = tk.Button(button_frame, text="Enable", command=self.enable_package)
         self.enable_button.pack(side=tk.LEFT, padx=5, pady=5)
         
+        self.snap_install_button = tk.Button(button_frame, text="Snap Install", command=self.open_snap_install)
+        self.snap_install_button.pack(side=tk.LEFT, padx=5, pady=5)
+        
         self.raw_data = []  # Pełna lista pakietów (do filtrowania)
         self.refresh_data()
 
-    def execute_command_old(self, command):
+    def execute_command(self, command):
         try:
             result = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
             stdout, stderr = result.communicate()
-
+            
             if stderr:
                 messagebox.showerror("Error", stderr)
             
@@ -183,6 +186,69 @@ class SnapManagerApp:
                 pos = end_idx  # Aktualizujemy pozycję do następnego URL-a
             
             text_widget.config(state=tk.DISABLED)  # Zablokowanie edycji tekstu
+
+    def open_snap_install(self):
+        snap_install_window = tk.Toplevel(self.root)
+        snap_install_window.title("Snap Install")
+
+        # Pole wyszukiwania
+        search_frame = tk.Frame(snap_install_window)
+        search_frame.pack(fill=tk.X, pady=5)
+
+        tk.Label(search_frame, text="Search:").pack(side=tk.LEFT, padx=5)
+        self.install_filter_entry = tk.Entry(search_frame)
+        self.install_filter_entry.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+        self.install_filter_entry.bind("<Return>", lambda event: self.search_snap_packages())
+
+        # Tabela wyników
+        self.install_tree = ttk.Treeview(snap_install_window, columns=("Name", "Version", "Publisher", "Notes", "Summary"), show="headings")
+        for col in ("Name", "Version", "Publisher", "Notes", "Summary"):
+            self.install_tree.heading(col, text=col, command=lambda c=col: self.sort_column(c, False))
+            self.install_tree.column(col, width=150, anchor=tk.W)
+        self.install_tree.pack(fill=tk.BOTH, expand=True)
+
+        # Przycisk "Info"
+        install_info2_button = tk.Button(snap_install_window, text="Info", command=self.show_info)
+        install_info2_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+        # Przycisk "Install"
+        install_button = tk.Button(snap_install_window, text="Install", command=self.install_package)
+        install_button.pack(side=tk.LEFT, padx=5, pady=5)
+
+    def search_snap_packages(self):
+        search_query = self.install_filter_entry.get()  # Pobierz frazę z pola wyszukiwania
+        if search_query:
+            # Wywołanie polecenia snap search
+            output = self.execute_command(f"snap search {search_query}")
+            lines = output.splitlines()[1:]  # Pomijamy linię nagłówka
+            
+            # Wyczyść tabelę przed załadowaniem nowych wyników
+            self.install_tree.delete(*self.install_tree.get_children())
+            
+            # Wzorzec do wyodrębniania kolumn danych
+            pattern = re.compile(r"^(?P<Name>\S+)\s+(?P<Version>\S+)\s+(?P<Publisher>\S+)\s+(?P<Notes>-|classic)\s+(?P<Summary>.+)$")
+            
+            for line in lines:
+                match = pattern.match(line)
+                if match:
+                    # Wyciągamy dane za pomocą nazwanych grup
+                    name = match.group("Name")
+                    version = match.group("Version")
+                    publisher = match.group("Publisher")
+                    notes = match.group("Notes")
+                    summary = match.group("Summary")
+                    
+                    # Dodajemy wiersz do tabeli
+                    item = (name, version, publisher, notes, summary)
+                    self.install_tree.insert("", "end", values=item)
+
+    def install_package(self):
+        selected_item = self.install_tree.selection()
+        if selected_item:
+            package_name = self.install_tree.item(selected_item[0])["values"][0]
+            if messagebox.askyesno("Confirm", f"Do you want to install {package_name}?"):
+                self.execute_command(f"snap install {package_name}")
+                messagebox.showinfo("Success", f"Package {package_name} installed.")
 
     def remove_package(self):
         package = self.get_selected_package()
