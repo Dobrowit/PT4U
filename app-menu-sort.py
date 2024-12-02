@@ -2,7 +2,7 @@
 
 import os
 import glob
-import json
+import configparser
 
 def gather_desktop_files():
     # Ścieżki do katalogów z plikami .desktop
@@ -18,26 +18,41 @@ def gather_desktop_files():
 
     return desktop_files
 
-def extract_app_names(desktop_files):
+def extract_app_names(desktop_files, lang):
     app_names = []
-    for file_path in desktop_files:
-        app_name = os.path.basename(file_path)
-        if app_name.endswith(".desktop"):
-            app_names.append(app_name)
 
-    return sorted(app_names)
+    for file_path in desktop_files:
+        config = configparser.ConfigParser(interpolation=None, delimiters=('=',))
+        config.optionxform = str  # Zachowaj wielkość liter w kluczach
+        try:
+            config.read(file_path, encoding="utf-8")
+            name_field = f"Name[{lang}]" if lang else "Name"
+            name = config["Desktop Entry"].get(name_field, None) or config["Desktop Entry"].get("Name", None)
+            if name:
+                app_names.append((name, os.path.basename(file_path)))
+        except Exception as e:
+            # Pomijamy pliki, których nie można poprawnie odczytać
+            continue
+
+    # Sortowanie po nazwach (pierwszy element krotki)
+    return sorted(app_names, key=lambda x: x[0])
 
 def generate_app_picker_layout(app_names):
-    # Generowanie listy aplikacji bez grup
-    layout = [{"apps": app_names}]
-    return json.dumps(layout, indent=4)
+    # Generowanie wartości klucza zgodnie z wymaganym formatem
+    layout = []
+    for position, (_, app_file) in enumerate(app_names):
+        layout.append(f"'{app_file}': <{{'position': <{position}>}}>")
+    return f"[{', '.join(layout)}]"
 
 if __name__ == "__main__":
+    # Pobranie preferowanego języka od użytkownika
+    lang = input("Podaj kod języka (np. 'pl' dla polskiego) lub naciśnij Enter dla domyślnego: ").strip()
+
     # Pobranie plików .desktop
     desktop_files = gather_desktop_files()
 
     # Wyciągnięcie i posortowanie nazw aplikacji
-    app_names = extract_app_names(desktop_files)
+    app_names = extract_app_names(desktop_files, lang)
 
     # Generowanie układu dla klucza dconf
     app_picker_layout = generate_app_picker_layout(app_names)
@@ -46,4 +61,4 @@ if __name__ == "__main__":
     print(app_picker_layout)
 
     print("\nAby ustawić klucz, użyj polecenia:")
-    print("gsettings set org.gnome.shell app-picker-layout '{layout}'".format(layout=app_picker_layout))
+    print(f"gsettings set org.gnome.shell app-picker-layout \"{app_picker_layout}\"")
