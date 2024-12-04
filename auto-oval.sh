@@ -60,6 +60,11 @@ fi
 if [ "$1" = "-cl" ]; then
   rm $CVEXML $PKGXML $USNXML
   rm report-cve.html report-pkg.html report-usn.html
+  rm report-cis_level1_workstation.html
+  rm report-cis_level2_workstation.html
+  rm report-cis_level1_server.html
+  rm report-cis_level2_server.html
+  rm report-disa_stig.html
   exit 0
 fi
 
