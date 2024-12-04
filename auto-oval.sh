@@ -1,35 +1,25 @@
 #!/bin/bash
-METAXML=com.ubuntu.$(lsb_release -cs).usn.oval.xml
-METAXML=oci.com.ubuntu.$(lsb_release -cs).pkg.oval.xml
-METAXML=com.ubuntu.$(lsb_release -cs).usn.oval.xml
+# Dla wydań chmórowych i realtime należy pobrać nieco inne pliki xml
 
-CVE
-com.ubuntu.noble.cve.oval.xml.bz2
-com.ubuntu.realtime_noble.cve.oval.xml.bz2
-oci.com.ubuntu.noble.cve.oval.xml.bz2
-oci.com.ubuntu.realtime_noble.cve.oval.xml.bz2
+URL=https://security-metadata.canonical.com/oval/
+CVEXML=com.ubuntu.$(lsb_release -cs).cve.oval.xml
+PKGXML=com.ubuntu.$(lsb_release -cs).pkg.oval.xml
+USNXML=com.ubuntu.$(lsb_release -cs).usn.oval.xml
 
-PKG
-com.ubuntu.noble.pkg.oval.xml.bz2
-com.ubuntu.realtime_noble.pkg.oval.xml.bz2
-oci.com.ubuntu.noble.pkg.oval.xml.bz2
-oci.com.ubuntu.realtime_noble.pkg.oval.xml.bz2
+wget $URL$CVEXML.bz2
+wget $URL$PKGXML.bz2
+wget $URL$USNXML.bz2
 
-USN
-com.ubuntu.noble.usn.oval.xml.bz2
-oci.com.ubuntu.noble.usn.oval.xml.bz2
+bunzip2 $CVEXML.bz2
+bunzip2 $PKGXML.bz2
+bunzip2 $USNXML.bz2
 
-https://chatgpt.com/share/67500a1c-2d48-8013-97eb-5146254bfb36
- 	
-wget https://security-metadata.canonical.com/oval/$METAXML.bz2
-bunzip2 $METAXML.bz2
-oscap oval eval --report report.html $METAXML
+oscap oval eval --report report-cve.html $CVEXML
+oscap oval eval --report report-pkg.html $PKGXML
+oscap oval eval --report report-usn.html $USNXML
 
-#Cloud Ubuntu 20.04
-#wget https://security-metadata.canonical.com/oval/oci.com.ubuntu.focal.usn.oval.xml.bz2
-#bunzip2 oci.com.ubuntu.focal.usn.oval.xml.bz2
-#wget -O manifest https://cloud-images.ubuntu.com/releases/focal/release/ubuntu-20.04-server-cloudimg-amd64-root.manifest
-#oscap oval eval --report report.html oci.com.ubuntu.focal.usn.oval.xml
+xdg-open report-cve.html 2>/dev/null
+xdg-open report-pkg.html 2>/dev/null
+xdg-open report-usn.html 2>/dev/null
 
-xdg-open report.html 2>/dev/null
-rm $METAXML
+rm $CVEXML $PKGXML $USNXML
