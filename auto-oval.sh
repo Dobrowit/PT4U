@@ -21,6 +21,7 @@ if [ "$1" = "-w1" ]; then
   TEST=cis_level1_workstation
   sudo usg audit $TEST --html-file report-$TEST.html
   sudo chmod 664 report-$TEST.html
+  sudo chown $USER:$USER report-$TEST.html
   xdg-open report-$TEST.html 2>/dev/null
   exit 0
 fi
@@ -29,6 +30,7 @@ if [ "$1" = "-w2" ]; then
   TEST=cis_level2_workstation
   sudo usg audit $TEST --html-file report-$TEST.html
   sudo chmod 664 report-$TEST.html
+  sudo chown $USER:$USER report-$TEST.html
   xdg-open report-$TEST.html 2>/dev/null
   exit 0
 fi
@@ -37,6 +39,7 @@ if [ "$1" = "-s1" ]; then
   TEST=cis_level1_server
   sudo usg audit $TEST --html-file report-$TEST.html
   sudo chmod 664 report-$TEST.html
+  sudo chown $USER:$USER report-$TEST.html
   xdg-open report-$TEST.html 2>/dev/null
   exit 0
 fi
@@ -45,6 +48,7 @@ if [ "$1" = "-s2" ]; then
   TEST=cis_level2_server
   sudo usg audit $TEST --html-file report-$TEST.html
   sudo chmod 664 report-$TEST.html
+  sudo chown $USER:$USER report-$TEST.html
   xdg-open report-$TEST.html 2>/dev/null
   exit 0
 fi
@@ -53,6 +57,7 @@ if [ "$1" = "-disa" ]; then
   TEST=disa_stig
   sudo usg audit $TEST --html-file report-$TEST.html
   sudo chmod 664 report-$TEST.html
+  sudo chown $USER:$USER report-$TEST.html
   xdg-open report-$TEST.html 2>/dev/null
   exit 0
 fi
