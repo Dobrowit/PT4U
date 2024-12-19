@@ -95,7 +95,11 @@ run() {
 }
 
 ttitle() {
-    echo -en "\033]0;$1\007"
+    TITLE=$1
+    if [ "$1" -eq "" ]; then
+      TITLE="Terminal"
+    fi
+    echo -en "\033]0;$TITLE\007"
 }
 
 function show_json() {
