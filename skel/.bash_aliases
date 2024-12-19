@@ -89,9 +89,9 @@ alias lsof_reg="lsof | grep REG | awk '{print $NF}' | sort -u"
 #alias nplayogg='for i in /nas/multimedia/ogg/*.ogg; do mplayer "$i"; done'
 #alias nplaymp3='for i in /nas/multimedia/mp3/*.mp3; do mplayer "$i"; done'
 
-runnil() {
+run() {
     echo -en "\033]0;$1\007"
-    $1 2>/dev/null
+    $1 2>/dev/null &
 }
 
 ttitle() {
