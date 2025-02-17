@@ -64,6 +64,7 @@ alias sha='shasum -a 256 '
 alias shutdown='sudo /sbin/shutdown'
 alias snoopdos='clear ; gio monitor -m -d ~/*'
 alias snoopg='clear ; dconf watch /'
+alias sort_t="sed '1d' | sort"
 alias startgit='cd `git rev-parse --show-toplevel` && git checkout master && git pull'
 alias synaptic='sudo synaptic'
 alias sysinfo='neofetch --cpu_temp C'
