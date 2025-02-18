@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+for vm in $(virsh list --name); do
+    if [ -n "$vm" ]; then
+        echo "Wysyłam sygnał wyłączenia do: $vm"
+        virsh destroy "$vm"
+    fi
+done
+

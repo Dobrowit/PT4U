@@ -1,0 +1,9 @@
+#!/usr/bin/bash
+
+for vm in $(virsh list --all --name); do
+    if [ -n "$vm" ] && [ "$(virsh domstate "$vm")" != "running" ]; then
+        echo "Uruchamiam maszynę: $vm"
+        virsh start "$vm"
+    fi
+done
+
