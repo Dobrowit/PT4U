@@ -265,10 +265,10 @@ function help2() {
 
 function czysciciel() {
   if [ -d "$BASEDIR" ]; then
-    rmdir "$BASEDIR"
+#    rmdirrmdir "$BASEDIR"
   fi
   if [ -d "$BASEDIR_GVFS" ]; then
-    rmdir "$BASEDIR_GVFS"
+#    rmdir "$BASEDIR_GVFS"
   fi
 }
 
@@ -411,7 +411,7 @@ if [ "$2" = "-d" ]; then
     exit 1
   fi
   echo $K18 # Udział CIFS został odmontowany pomyślnie.
-  rmdir $MNTDIR
+#  rmdir $MNTDIR
   czysciciel
   exit 0
 fi
@@ -425,7 +425,7 @@ if [ "$1" == "-da" ]; then
     sudo umount "$MNTDIR" 2>/dev/null
     if [ $? -eq 0 ]; then
       echo "$K19 $MNTDIR" # Odmontowano $MNTDIR
-      rmdir $MNTDIR
+#      rmdir $MNTDIR
     fi
   done
   czysciciel
