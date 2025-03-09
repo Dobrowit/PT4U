@@ -1,4 +1,5 @@
 #!/bin/bash
+## Oblukać https://blog.gitbutler.com/how-git-core-devs-configure-git/
 ## GitMag.sh
 ##
 ## Ustawienia i kolorki - nie zmieniać linii 6-8
